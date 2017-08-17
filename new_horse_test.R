@@ -1,6 +1,16 @@
+options(digits=4)
+# clean slate
+rm(list=ls())
+# library(devtools)
+# install_github("insongkim/wfe", ref = "new_branch")
+# load packages
+pkg <- c("wfe", "ggplot2", "plm", "pforeach")
+lapply(pkg, require, character.only = TRUE)
+setwd("/home/haixiaow/Simulate")
+
 sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
                       lead = 0,
-                      rho_1 = .4, rho_t_1 = .2, rho_tt_1 = .2, 
+                      rho_1 = .5, rho_t_1 = .8, rho_tt_1 = .2, 
                       rho_x = .4, rho_x2 = 0, lagTreOutc = .2, 
                       beta = 1, beta_x = .2, beta_x2 = 0, 
                       phi = .75, rho_t_2 = .3, ephi = .5,
@@ -298,4 +308,29 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   ))
   
 }
+
+reps <- 1000
+cat("Now we are doing New_N50_ephi0_homo \n")
+New_N50_ephi0_homo <- pforeach(i = 1:reps,.cores = 17, .seed = 8888)({
+  out <- sim_wfe2(N = 50, T = 20, ephi = 0, hetereo = F)
+  list(out)
+})
+save(New_N50_ephi0_homo, file = "New_N50_ephi0_homo")
+
+cat("Now we are doing New_N100_ephi0_homo \n")
+New_N100_ephi0_homo <- pforeach(i = 1:reps,.cores = 17, .seed = 8888)({
+  out <- sim_wfe2(N = 100, T = 20, ephi = 0, hetereo = F)
+  list(out)
+})
+save(New_N100_ephi0_homo, file = "New_N100_ephi0_homo")
+
+cat("Now we are doing New_N200_ephi0_homo \n")
+New_N200_ephi0_homo <- pforeach(i = 1:reps,.cores = 17, .seed = 8888)({
+  out <- sim_wfe2(N = 200, T = 20, ephi = 0, hetereo = F)
+  list(out)
+})
+save(New_N200_ephi0_homo, file = "New_N200_ephi0_homo")
+
+
+
 
