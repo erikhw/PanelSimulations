@@ -334,4 +334,41 @@ New_N200_ephi0_homo <- pforeach(i = 1:reps,.cores = 17, .seed = 8888)({
 save(New_N200_ephi0_homo, file = "New_N200_ephi0_homo")
 
   
-  
+cat("Now we are doing New_N200_ephi0_homo \n")
+New_N300_ephi0_homo <- pforeach(i = 1:reps,.cores = 17, .seed = 8888)({
+  out <- sim_wfe2(N = 300, T = 20, ephi = 0, hetereo = F)
+  list(out)
+})
+save(New_N300_ephi0_homo, file = "New_N300_ephi0_homo")
+
+
+### hetereo ###
+cat("Now we are doing New_N50_ephi0_hetereo \n")
+New_N50_ephi0_hetereo <- pforeach(i = 1:reps,.cores = 17, .seed = 8888)({
+  out <- sim_wfe2(N = 50, T = 20, ephi = 0, hetereo = T)
+  list(out)
+})
+save(New_N50_ephi0_hetereo, file = "New_N50_ephi0_hetereo")
+
+cat("Now we are doing New_N100_ephi0_hetereo \n")
+New_N100_ephi0_hetereo <- pforeach(i = 1:reps,.cores = 17, .seed = 8888)({
+  out <- sim_wfe2(N = 100, T = 20, ephi = 0, hetereo = T)
+  list(out)
+})
+save(New_N100_ephi0_hetereo, file = "New_N100_ephi0_hetereo")
+
+cat("Now we are doing New_N200_ephi0_hetereo \n")
+New_N200_ephi0_hetereo <- pforeach(i = 1:reps,.cores = 17, .seed = 8888)({
+  out <- sim_wfe2(N = 200, T = 20, ephi = 0, hetereo = T)
+  list(out)
+})
+save(New_N200_ephi0_hetereo, file = "New_N200_ephi0_hetereo")
+
+
+cat("Now we are doing New_N200_ephi0_hetereo \n")
+New_N300_ephi0_hetereo <- pforeach(i = 1:reps,.cores = 17, .seed = 8888)({
+  out <- sim_wfe2(N = 300, T = 20, ephi = 0, hetereo = T)
+  list(out)
+})
+save(New_N300_ephi0_hetereo, file = "New_N300_ephi0_hetereo")
+

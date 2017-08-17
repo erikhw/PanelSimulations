@@ -3,7 +3,7 @@
 
 #SBATCH -N 1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=17
+#SBATCH --cpus-per-task=19
 #SBATCH -t 24:00:00
 #SBATCH -J horse_race_simulations
 #SBATCH -o log-horse_race_simulations.%j 
