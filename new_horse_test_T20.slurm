@@ -11,4 +11,4 @@
 #SBATCH --mail-type=end
 #SBATCH --mem 64000
 
-srun Rscript ./new_horse_test.R 
+srun Rscript ./new_horse_test_T20.R 

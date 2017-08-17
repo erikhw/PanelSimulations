@@ -312,63 +312,63 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
 
 # rho_t_1 = .8; rho_1 = .5
 reps <- 1000
-cat("Now we are doing New_N50_ephi0_homo \n")
-New_N50_ephi0_homo <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
-  out <- sim_wfe2(N = 50, T = 20, ephi = 0, hetereo = F)
+cat("Now we are doing New_N50_ephi0_T10_homo \n")
+New_N50_ephi0_T10_homo <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- sim_wfe2(N = 50, T = 10, ephi = 0, hetereo = F)
   list(out)
 })
-save(New_N50_ephi0_homo, file = "New_N50_ephi0_homo")
+save(New_N50_ephi0_T10_homo, file = "New_N50_ephi0_T10_homo")
 
-cat("Now we are doing New_N100_ephi0_homo \n")
-New_N100_ephi0_homo <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
-  out <- sim_wfe2(N = 100, T = 20, ephi = 0, hetereo = F)
+cat("Now we are doing New_N100_ephi0_T10_homo \n")
+New_N100_ephi0_T10_homo <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- sim_wfe2(N = 100, T = 10, ephi = 0, hetereo = F)
   list(out)
 })
-save(New_N100_ephi0_homo, file = "New_N100_ephi0_homo")
+save(New_N100_ephi0_T10_homo, file = "New_N100_ephi0_T10_homo")
 
-cat("Now we are doing New_N200_ephi0_homo \n")
-New_N200_ephi0_homo <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
-  out <- sim_wfe2(N = 200, T = 20, ephi = 0, hetereo = F)
+cat("Now we are doing New_N200_ephi0_T10_homo \n")
+New_N200_ephi0_T10_homo <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- sim_wfe2(N = 200, T = 10, ephi = 0, hetereo = F)
   list(out)
 })
-save(New_N200_ephi0_homo, file = "New_N200_ephi0_homo")
+save(New_N200_ephi0_T10_homo, file = "New_N200_ephi0_T10_homo")
 
-cat("Now we are doing New_N300_ephi0_homo \n")
-New_N300_ephi0_homo <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
-  out <- sim_wfe2(N = 300, T = 20, ephi = 0, hetereo = F)
+cat("Now we are doing New_N300_ephi0_T10_homo \n")
+New_N300_ephi0_T10_homo <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- sim_wfe2(N = 300, T = 10, ephi = 0, hetereo = F)
   list(out)
 })
-save(New_N300_ephi0_homo, file = "New_N300_ephi0_homo")
+save(New_N300_ephi0_T10_homo, file = "New_N300_ephi0_T10_homo")
 
 
 ### hetereo ###
-cat("Now we are doing New_N50_ephi0_hetereo \n")
-New_N50_ephi0_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
-  out <- sim_wfe2(N = 50, T = 20, ephi = 0, hetereo = T)
+cat("Now we are doing New_N50_ephi0_T10_hetereo \n")
+New_N50_ephi0_T10_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- sim_wfe2(N = 50, T = 10, ephi = 0, hetereo = T)
   list(out)
 })
-save(New_N50_ephi0_hetereo, file = "New_N50_ephi0_hetereo")
+save(New_N50_ephi0_T10_hetereo, file = "New_N50_ephi0_T10_hetereo")
 
-cat("Now we are doing New_N100_ephi0_hetereo \n")
-New_N100_ephi0_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
-  out <- sim_wfe2(N = 100, T = 20, ephi = 0, hetereo = T)
+cat("Now we are doing New_N100_ephi0_T10_hetereo \n")
+New_N100_ephi0_T10_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- sim_wfe2(N = 100, T = 10, ephi = 0, hetereo = T)
   list(out)
 })
-save(New_N100_ephi0_hetereo, file = "New_N100_ephi0_hetereo")
+save(New_N100_ephi0_T10_hetereo, file = "New_N100_ephi0_T10_hetereo")
 
-cat("Now we are doing New_N200_ephi0_hetereo \n")
-New_N200_ephi0_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
-  out <- sim_wfe2(N = 200, T = 20, ephi = 0, hetereo = T)
+cat("Now we are doing New_N200_ephi0_T10_hetereo \n")
+New_N200_ephi0_T10_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- sim_wfe2(N = 200, T = 10, ephi = 0, hetereo = T)
   list(out)
 })
-save(New_N200_ephi0_hetereo, file = "New_N200_ephi0_hetereo")
+save(New_N200_ephi0_T10_hetereo, file = "New_N200_ephi0_T10_hetereo")
 
 
-cat("Now we are doing New_N300_ephi0_hetereo \n")
-New_N300_ephi0_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
-  out <- sim_wfe2(N = 300, T = 20, ephi = 0, hetereo = T)
+cat("Now we are doing New_N300_ephi0_T10_hetereo \n")
+New_N300_ephi0_T10_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- sim_wfe2(N = 300, T = 10, ephi = 0, hetereo = T)
   list(out)
 })
-save(New_N300_ephi0_hetereo, file = "New_N300_ephi0_hetereo")
+save(New_N300_ephi0_T10_hetereo, file = "New_N300_ephi0_T10_hetereo")
 
 
