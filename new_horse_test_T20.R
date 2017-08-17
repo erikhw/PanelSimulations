@@ -6,7 +6,7 @@ rm(list=ls())
 # load packages
 pkg <- c("wfe", "ggplot2", "plm", "pforeach")
 lapply(pkg, require, character.only = TRUE)
-setwd("/home/haixiaow/Simulate/results")
+setwd("/home/haixiaow/Simulate/Simulations/results")
 
 sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
                       lead = 0,
