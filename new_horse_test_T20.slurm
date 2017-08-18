@@ -1,4 +1,4 @@
-out#!/usr/bin/env bash
+#!/usr/bin/env bash
 
 
 #SBATCH -N 1
@@ -12,3 +12,5 @@ out#!/usr/bin/env bash
 #SBATCH --mem 128000
 
 srun Rscript ./new_horse_test_T20.R 
+
+
