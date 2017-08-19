@@ -22,18 +22,10 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   y.lagged <- matrix(NA, ncol = N, nrow = Time)
   treat.lagged <- matrix(NA, ncol = N, nrow = Time)
   
-  alphai <- rnorm(N, mean = 4)
-  gammat <- rnorm(Time, mean = 4)
+  alphai <- rnorm(N, mean = 6)
+  gammat <- rnorm(Time, mean = 6)
   
   x <- matrix(rep(NA, N*Time), ncol = N)
-  # for (i in 1:N) {
-  #   for(t in 2:Time){
-  #     x[, i][1] <- rnorm(1, 0.5, 1) + gammat[1]
-  #     x[, i][t] <- phi*x[, i][t-1] + rnorm(1, 0.5, 1) + gammat[t] + alphai[i]
-  #   }
-  #   
-  # }
-  # 
   for (i in 1:N) {
     x[1, i] <- rnorm(1, 0.5, 1) + gammat[1]
     for(t in 2:Time){
@@ -318,25 +310,25 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
 
 
 # rho_t_1 = .8; rho_1 = .8
-reps <- 1000
+reps <- 2000
 
 ### hetereo ###
 cat("Now we are doing New_N50_ephi0.5_T20_hetereo \n")
-New_N50_ephi0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+New_N50_ephi0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
   out <- sim_wfe2(N = 50, T = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
 save(New_N50_ephi0.5_T20_hetereo, file = "New_N50_ephi0.5_T20_hetereo")
 
 cat("Now we are doing New_N100_ephi0.5_T20_hetereo \n")
-New_N100_ephi0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+New_N100_ephi0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
   out <- sim_wfe2(N = 100, T = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
 save(New_N100_ephi0.5_T20_hetereo, file = "New_N100_ephi0.5_T20_hetereo")
 
 cat("Now we are doing New_N200_ephi0.5_T20_hetereo \n")
-New_N200_ephi0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+New_N200_ephi0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
   out <- sim_wfe2(N = 200, T = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
@@ -344,10 +336,41 @@ save(New_N200_ephi0.5_T20_hetereo, file = "New_N200_ephi0.5_T20_hetereo")
 
 
 cat("Now we are doing New_N300_ephi0.5_T20_hetereo \n")
-New_N500_ephi0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
-  out <- sim_wfe2(N = 500, T = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+New_N300_ephi0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(N = 300, T = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
-save(New_N500_ephi0.5_T20_hetereo, file = "New_N500_ephi0.5_T20_hetereo")
+save(New_N300_ephi0.5_T20_hetereo, file = "New_N300_ephi0.5_T20_hetereo")
+
+
+### hetereo ###
+cat("Now we are doing New_N50_ephi0.5rhott0.5_T20_hetereo \n")
+New_N50_ephi0.5rhott0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(N = 50, T = 20, ephi = 0.5, rho_tt_1 = 0.5, lagTreOutc = 0.5, hetereo = T)
+  list(out)
+})
+save(New_N50_ephi0.5rhott0.5_T20_hetereo, file = "New_N50_ephi0.5rhott0.5_T20_hetereo")
+
+cat("Now we are doing New_N100_ephi0.5rhott0.5_T20_hetereo \n")
+New_N100_ephi0.5rhott0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(N = 100, T = 20, ephi = 0.5, rho_tt_1 = 0.5, lagTreOutc = 0.5, hetereo = T)
+  list(out)
+})
+save(New_N100_ephi0.5rhott0.5_T20_hetereo, file = "New_N100_ephi0.5rhott0.5_T20_hetereo")
+
+cat("Now we are doing New_N200_ephi0.5rhott0.5_T20_hetereo \n")
+New_N200_ephi0.5rhott0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(N = 200, T = 20, ephi = 0.5, rho_tt_1 = 0.5, lagTreOutc = 0.5, hetereo = T)
+  list(out)
+})
+save(New_N200_ephi0.5rhott0.5_T20_hetereo, file = "New_N200_ephi0.5rhott0.5_T20_hetereo")
+
+
+cat("Now we are doing New_N300_ephi0.5rhott0.5_T20_hetereo \n")
+New_N300_ephi0.5rhott0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(N = 300, T = 20, ephi = 0.5, rho_tt_1 = 0.5, lagTreOutc = 0.5, hetereo = T)
+  list(out)
+})
+save(New_N300_ephi0.5rhott0.5_T20_hetereo, file = "New_N300_ephi0.5rhott0.5_T20_hetereo")
 
 

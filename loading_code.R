@@ -1,7 +1,7 @@
 setwd("~/Dropbox/w2fe/Simulations/results")
-load("New_N50_ephi0_homo")
+load("New_N50_ephi0.5_T20_hetereo")
 
-Synth_wfe_lag.one_coef_50 <- abs(1-mean(sapply(New_N50_ephi0_homo, function (x) x$Synth_wfe_lag.one_coef), na.rm = T))
+Synth_wfe_lag.one_coef_50 <- abs(1-mean(sapply(New_N50_ephi0.5_T20_hetereo, function (x) x$Synth_wfe_lag.one_coef), na.rm = T))
 
 Pscore_wfe_lag.one_coef_50 <- abs(1-mean(sapply(New_N50_ephi0_homo, function (x) x$Pscore_wfe_lag.one_coef), na.rm = T))
 
@@ -13,7 +13,7 @@ Pscore_wfe_lag.two_coef_50 <- abs(1-mean(sapply(New_N50_ephi0_homo, function (x)
 
 Maha_wfe_lag.two_coef_50 <- abs(1-mean(sapply(New_N50_ephi0_homo, function (x) x$Maha_wfe_lag.two_coef), na.rm = T))
 
-ols_coef_50 <- abs(1-mean(sapply(New_N50_ephi0_homo, function (x) x$ols_coef), na.rm = T))
+ols_coef_50 <- abs(1-mean(sapply(New_N50_ephi0.5_T20_hetereo, function (x) x$ols_coef), na.rm = T))
 
 Synth_wfe_lag.one_coef_50
 Synth_wfe_lag.two_coef_50
@@ -225,6 +225,8 @@ Maha_wfe_lag.two_coef_200 <- abs(1-mean(sapply(New_N200_ephi0.5_T20_hetereo,
 Pscore_wfe_lag.two_coef_200 <- abs(1-mean(sapply(New_N200_ephi0.5_T20_hetereo, 
                                                  function (x) x$Pscore_wfe_lag.two_coef), na.rm = T))
 
+
+
 load("N500_T5_rho8")
 ols_N500_T5 <- abs(1-mean(sapply(N500_T5_rho8, function (x) x$x1), na.rm = T))
 
@@ -236,4 +238,24 @@ ols_N500_T20 <- abs(1-mean(sapply(N500_T20_rho8, function (x) x$x1), na.rm = T))
 
 load("N500_T30_rho8")
 ols_N500_T30 <- abs(1-mean(sapply(N500_T30_rho8, function (x) x$x1), na.rm = T))
+
+
+load("N50_T5_rho5")
+ols_N50_T5_rho5 <- abs(1-mean(sapply(N50_T5_rho5, function (x) x$x1), na.rm = T))
+load("N1000_T5_rho5")
+ols_N1000_T5_rho5 <- abs(1-mean(sapply(N1000_T5_rho5, function (x) x$x1), na.rm = T))
+
+load("N50_T5_rho8")
+ols_N50_T5_rho8 <- abs(1-mean(sapply(N50_T5_rho8, function (x) x$x1), na.rm = T))
+load("N1000_T5_rho8")
+ols_N1000_T5_rho8 <- abs(1-mean(sapply(N1000_T5_rho8, function (x) x$x1), na.rm = T))
+
+load("N50_T20_rho8")
+ols_N50_T20_rho8 <- abs(1-mean(sapply(N50_T20_rho8, function (x) x$x1), na.rm = T))
+load("N1000_T20_rho8")
+ols_N1000_T20_rho8 <- abs(1-mean(sapply(N1000_T20_rho8, function (x) x$x1), na.rm = T))
+
+load("N1000_T10_rho8")
+ols_N1000_T10_rho8 <- abs(1-mean(sapply(N1000_T10_rho8, function (x) x$x1), na.rm = T))
+
 
