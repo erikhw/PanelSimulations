@@ -166,3 +166,65 @@ c(Pscore_wfe_lag.one_coef_50, Pscore_wfe_lag.one_coef_100, Pscore_wfe_lag.one_co
 
 c(ols_coef_50, ols_coef_100, ols_coef_200, ols_coef_300)
 
+
+
+setwd("~/Dropbox/w2fe/Simulations/results")
+load("New_N50_ephi0.5_T20_hetereo")
+ols_coef_50 <- abs(1-mean(sapply(New_N50_ephi0.5_T20_hetereo, function (x) x$ols_coef), na.rm = T))
+Synth_wfe_lag.one_coef_50 <- abs(1-mean(sapply(New_N50_ephi0.5_T20_hetereo, 
+                                               function (x) x$Synth_wfe_lag.one_coef), na.rm = T))
+Maha_wfe_lag.one_coef_50 <- abs(1-mean(sapply(New_N50_ephi0.5_T20_hetereo, 
+                                               function (x) x$Maha_wfe_lag.one_coef), na.rm = T))
+
+Pscore_wfe_lag.one_coef_50 <- abs(1-mean(sapply(New_N50_ephi0.5_T20_hetereo, 
+                                               function (x) x$Pscore_wfe_lag.one_coef), na.rm = T))
+
+Synth_wfe_lag.two_coef_50 <- abs(1-mean(sapply(New_N50_ephi0.5_T20_hetereo, 
+                                               function (x) x$Synth_wfe_lag.two_coef), na.rm = T))
+Maha_wfe_lag.two_coef_50 <- abs(1-mean(sapply(New_N50_ephi0.5_T20_hetereo, 
+                                              function (x) x$Maha_wfe_lag.two_coef), na.rm = T))
+
+Pscore_wfe_lag.two_coef_50 <- abs(1-mean(sapply(New_N50_ephi0.5_T20_hetereo, 
+                                                function (x) x$Pscore_wfe_lag.two_coef), na.rm = T))
+
+
+load("New_N100_ephi0.5_T20_hetereo")
+ols_coef_100 <- abs(1-mean(sapply(New_N100_ephi0.5_T20_hetereo, function (x) x$ols_coef), na.rm = T))
+Synth_wfe_lag.one_coef_100 <- abs(1-mean(sapply(New_N100_ephi0.5_T20_hetereo, 
+                                               function (x) x$Synth_wfe_lag.one_coef), na.rm = T))
+Maha_wfe_lag.one_coef_100 <- abs(1-mean(sapply(New_N100_ephi0.5_T20_hetereo, 
+                                              function (x) x$Maha_wfe_lag.one_coef), na.rm = T))
+
+Pscore_wfe_lag.one_coef_100 <- abs(1-mean(sapply(New_N100_ephi0.5_T20_hetereo, 
+                                                function (x) x$Pscore_wfe_lag.one_coef), na.rm = T))
+
+Synth_wfe_lag.two_coef_100 <- abs(1-mean(sapply(New_N100_ephi0.5_T20_hetereo, 
+                                               function (x) x$Synth_wfe_lag.two_coef), na.rm = T))
+Maha_wfe_lag.two_coef_100 <- abs(1-mean(sapply(New_N100_ephi0.5_T20_hetereo, 
+                                              function (x) x$Maha_wfe_lag.two_coef), na.rm = T))
+
+Pscore_wfe_lag.two_coef_100 <- abs(1-mean(sapply(New_N100_ephi0.5_T20_hetereo, 
+                                                function (x) x$Pscore_wfe_lag.two_coef), na.rm = T))
+
+
+load("New_N200_ephi0.5_T20_hetereo")
+ols_coef_200 <- abs(1-mean(sapply(New_N200_ephi0.5_T20_hetereo, function (x) x$ols_coef), na.rm = T))
+Synth_wfe_lag.one_coef_200 <- abs(1-mean(sapply(New_N200_ephi0.5_T20_hetereo, 
+                                                function (x) x$Synth_wfe_lag.one_coef), na.rm = T))
+Maha_wfe_lag.one_coef_200 <- abs(1-mean(sapply(New_N200_ephi0.5_T20_hetereo, 
+                                               function (x) x$Maha_wfe_lag.one_coef), na.rm = T))
+
+Pscore_wfe_lag.one_coef_200 <- abs(1-mean(sapply(New_N200_ephi0.5_T20_hetereo, 
+                                                 function (x) x$Pscore_wfe_lag.one_coef), na.rm = T))
+
+Synth_wfe_lag.two_coef_200 <- abs(1-mean(sapply(New_N200_ephi0.5_T20_hetereo, 
+                                                function (x) x$Synth_wfe_lag.two_coef), na.rm = T))
+Maha_wfe_lag.two_coef_200 <- abs(1-mean(sapply(New_N200_ephi0.5_T20_hetereo, 
+                                               function (x) x$Maha_wfe_lag.two_coef), na.rm = T))
+
+Pscore_wfe_lag.two_coef_200 <- abs(1-mean(sapply(New_N200_ephi0.5_T20_hetereo, 
+                                                 function (x) x$Pscore_wfe_lag.two_coef), na.rm = T))
+
+
+
+

@@ -60,7 +60,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
       (1+exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1]))
     treat[1,i] <- rbinom(1,1, prob/2)
     eps[1, i] <- rnorm(1)
-    y[1,i] <- rho_1*y.lagged[1,i] + alphai[i] + gammat[1] + beta*treat.lagged[1,i] + 
+    y[1,i] <- rho_1*y.lagged[1,i] + alphai[i] + gammat[1] + 
       beta*treat[1,i] + lagTreOutc*treat.lagged[1,i] + beta_x*x[1,i] + beta_x2*x2[1,i] +
       eps[1,i]
     
