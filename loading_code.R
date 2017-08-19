@@ -225,6 +225,15 @@ Maha_wfe_lag.two_coef_200 <- abs(1-mean(sapply(New_N200_ephi0.5_T20_hetereo,
 Pscore_wfe_lag.two_coef_200 <- abs(1-mean(sapply(New_N200_ephi0.5_T20_hetereo, 
                                                  function (x) x$Pscore_wfe_lag.two_coef), na.rm = T))
 
+load("N500_T5_rho8")
+ols_N500_T5 <- abs(1-mean(sapply(N500_T5_rho8, function (x) x$x1), na.rm = T))
 
+load("N500_T10_rho8")
+ols_N500_T10 <- abs(1-mean(sapply(N500_T10_rho8, function (x) x$x1), na.rm = T))
 
+load("N500_T20_rho8")
+ols_N500_T20 <- abs(1-mean(sapply(N500_T20_rho8, function (x) x$x1), na.rm = T))
+
+load("N500_T30_rho8")
+ols_N500_T30 <- abs(1-mean(sapply(N500_T30_rho8, function (x) x$x1), na.rm = T))
 

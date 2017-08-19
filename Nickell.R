@@ -16,8 +16,8 @@ twowayNickell <- function (N = 100, Time = 20,
   beta <- 1
   x1 <- matrix(rnorm(N*Time, 0.5,1), ncol=N)
   
-  alphai <- rnorm(N, mean = 2*apply(x1, 2, mean))
-  gammat <- rnorm(Time, mean = 2*apply(x1, 2, mean))
+  alphai <- rnorm(N, mean = 4*apply(x1, 2, mean))
+  gammat <- rnorm(Time, mean = 4*apply(x1, 2, mean))
   
   
   for (i in 1:N) {
@@ -79,6 +79,12 @@ N500_T5_rho8 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
 })
 save(N500_T5_rho8, file = "N500_T5_rho8")
 
+N1000_T5_rho8 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- twowayNickell(N = 1000, Time = 5)
+  list(out)
+})
+save(N1000_T5_rho8, file = "N1000_T5_rho8")
+
 N50_T10_rho8 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
   out <- twowayNickell(N = 50, Time = 10)
   list(out)
@@ -96,6 +102,12 @@ N500_T10_rho8 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
   list(out)
 })
 save(N500_T10_rho8, file = "N500_T10_rho8")
+
+N1000_T10_rho8 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- twowayNickell(N = 1000, Time = 10)
+  list(out)
+})
+save(N1000_T10_rho8, file = "N1000_T10_rho8")
 
 N50_T20_rho8 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
   out <- twowayNickell(N = 50, Time = 20)
@@ -115,6 +127,12 @@ N500_T20_rho8 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
 })
 save(N500_T20_rho8, file = "N500_T20_rho8")
 
+N1000_T20_rho8 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- twowayNickell(N = 1000, Time = 20)
+  list(out)
+})
+save(N1000_T20_rho8, file = "N1000_T20_rho8")
+
 N50_T30_rho8 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
   out <- twowayNickell(N = 50, Time = 30)
   list(out)
@@ -132,4 +150,110 @@ N500_T30_rho8 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
   list(out)
 })
 save(N500_T30_rho8, file = "N500_T30_rho8")
+
+N1000_T30_rho8 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- twowayNickell(N = 1000, Time = 30)
+  list(out)
+})
+save(N1000_T30_rho8, file = "N1000_T30_rho8")
+
+
+
+N50_T5_rho5 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- twowayNickell(rho_1 = 0.5,N = 50, Time = 5)
+  list(out)
+})
+save(N50_T5_rho5, file = "N50_T5_rho5")
+
+N100_T5_rho5 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- twowayNickell(rho_1 = 0.5,N = 100, Time = 5)
+  list(out)
+})
+save(N100_T5_rho5, file = "N100_T5_rho5")
+
+N500_T5_rho5 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- twowayNickell(rho_1 = 0.5,N = 500, Time = 5)
+  list(out)
+})
+save(N500_T5_rho5, file = "N500_T5_rho5")
+
+N1000_T5_rho5 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- twowayNickell(rho_1 = 0.5,N = 1000, Time = 5)
+  list(out)
+})
+save(N1000_T5_rho5, file = "N1000_T5_rho5")
+
+N50_T10_rho5 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- twowayNickell(rho_1 = 0.5,N = 50, Time = 10)
+  list(out)
+})
+save(N50_T10_rho5, file = "N50_T10_rho5")
+
+N100_T10_rho5 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- twowayNickell(rho_1 = 0.5,N = 100, Time = 10)
+  list(out)
+})
+save(N100_T10_rho5, file = "N100_T10_rho5")
+
+N500_T10_rho5 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- twowayNickell(rho_1 = 0.5,N = 500, Time = 10)
+  list(out)
+})
+save(N500_T10_rho5, file = "N500_T10_rho5")
+
+N1000_T10_rho5 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- twowayNickell(rho_1 = 0.5,N = 1000, Time = 10)
+  list(out)
+})
+save(N1000_T10_rho5, file = "N1000_T10_rho5")
+
+N50_T20_rho5 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- twowayNickell(rho_1 = 0.5,N = 50, Time = 20)
+  list(out)
+})
+save(N50_T20_rho5, file = "N50_T20_rho5")
+
+N100_T20_rho5 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- twowayNickell(rho_1 = 0.5,N = 100, Time = 20)
+  list(out)
+})
+save(N100_T20_rho5, file = "N100_T20_rho5")
+
+N500_T20_rho5 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- twowayNickell(rho_1 = 0.5,N = 500, Time = 20)
+  list(out)
+})
+save(N500_T20_rho5, file = "N500_T20_rho5")
+
+N1000_T20_rho5 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- twowayNickell(rho_1 = 0.5,N = 1000, Time = 20)
+  list(out)
+})
+save(N1000_T20_rho5, file = "N1000_T20_rho5")
+
+N50_T30_rho5 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- twowayNickell(rho_1 = 0.5,N = 50, Time = 30)
+  list(out)
+})
+save(N50_T30_rho5, file = "N50_T30_rho5")
+
+N100_T30_rho5 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- twowayNickell(rho_1 = 0.5,N = 100, Time = 30)
+  list(out)
+})
+save(N100_T30_rho5, file = "N100_T30_rho5")
+
+N500_T30_rho5 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- twowayNickell(rho_1 = 0.5,N = 500, Time = 30)
+  list(out)
+})
+save(N500_T30_rho5, file = "N500_T30_rho5")
+
+N1000_T30_rho5 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
+  out <- twowayNickell(rho_1 = 0.5,N = 1000, Time = 30)
+  list(out)
+})
+save(N1000_T30_rho5, file = "N1000_T30_rho5")
+
+
 

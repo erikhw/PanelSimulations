@@ -22,8 +22,8 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   y.lagged <- matrix(NA, ncol = N, nrow = Time)
   treat.lagged <- matrix(NA, ncol = N, nrow = Time)
   
-  alphai <- rnorm(N, mean = 1)
-  gammat <- rnorm(Time, mean = 1)
+  alphai <- rnorm(N, mean = 4)
+  gammat <- rnorm(Time, mean = 4)
   
   x <- matrix(rep(NA, N*Time), ncol = N)
   # for (i in 1:N) {
