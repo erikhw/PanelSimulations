@@ -60,7 +60,7 @@ twowayNickell <- function (N = 100, Time = 20,
               "x1_2" = ols2$coefficients["x1"]))
 }
 
-reps <- 1:1000
+reps <- 1000
 N50_T5_rho8 <- pforeach(i = 1:reps,.cores = 19, .seed = 8888)({
   out <- twowayNickell(N = 50, Time = 5)
   list(out)
