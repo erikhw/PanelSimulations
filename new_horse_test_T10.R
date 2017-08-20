@@ -9,7 +9,6 @@ lapply(pkg, require, character.only = TRUE)
 setwd("/home/haixiaow/Simulate/Simulations/results")
 
 
-
 sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
                       lead = 0,
                       rho_1 = .8, rho_t_1 = .8, rho_tt_1 = .2, 
@@ -24,9 +23,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   y.lagged <- matrix(NA, ncol = N, nrow = Time)
   treat.lagged <- matrix(NA, ncol = N, nrow = Time)
   
-  alphai <- rnorm(N, mean = 6)
-  gammat <- rnorm(Time, mean = 6)
-  
+
   x <- matrix(rep(NA, N*Time), ncol = N)
   for (i in 1:N) {
     x[1, i] <- rnorm(1, 0.5, 1) + gammat[1]
@@ -350,35 +347,66 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   
 }
 
+
 # rho_t_1 = .8; rho_1 = .8
 reps <- 2000
 
 ### hetereo ###
 cat("Now we are doing New_N50_ephi0.5_T10_hetereo \n")
+
+N <- 50; Time <- 10
+alphai <- rnorm(N, mean = 6)
+gammat <- rnorm(Time, mean = 6)
+
 New_N50_ephi0.5_T10_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
-  out <- sim_wfe2(N = 50, T = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  out <- sim_wfe2(N = N, Time = Time, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
 save(New_N50_ephi0.5_T10_hetereo, file = "New_N50_ephi0.5_T10_hetereo")
 
+N <- 100; Time <- 10
+alphai <- rnorm(N, mean = 6)
+gammat <- rnorm(Time, mean = 6)
+
 cat("Now we are doing New_N100_ephi0.5_T10_hetereo \n")
 New_N100_ephi0.5_T10_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
-  out <- sim_wfe2(N = 100, T = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  out <- sim_wfe2(N = N, Time = Time, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
 save(New_N100_ephi0.5_T10_hetereo, file = "New_N100_ephi0.5_T10_hetereo")
 
+N <- 200; Time <- 10
+alphai <- rnorm(N, mean = 6)
+gammat <- rnorm(Time, mean = 6)
+
 cat("Now we are doing New_N200_ephi0.5_T10_hetereo \n")
 New_N200_ephi0.5_T10_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
-  out <- sim_wfe2(N = 200, T = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  out <- sim_wfe2(N = N, Time = Time, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
 save(New_N200_ephi0.5_T10_hetereo, file = "New_N200_ephi0.5_T10_hetereo")
 
+N <- 500; Time <- 10
+alphai <- rnorm(N, mean = 6)
+gammat <- rnorm(Time, mean = 6)
 
-cat("Now we are doing New_N300_ephi0.5_T10_hetereo \n")
-New_N300_ephi0.5_T10_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
-  out <- sim_wfe2(N = 300, T = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+cat("Now we are doing New_N500_ephi0.5_T10_hetereo \n")
+New_N500_ephi0.5_T10_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(N = N, Time = Time, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
-save(New_N300_ephi0.5_T10_hetereo, file = "New_N300_ephi0.5_T10_hetereo")
+save(New_N500_ephi0.5_T10_hetereo, file = "New_N500_ephi0.5_T10_hetereo")
+
+
+
+N <- 1000; Time <- 10
+alphai <- rnorm(N, mean = 6)
+gammat <- rnorm(Time, mean = 6)
+
+cat("Now we are doing New_N500_ephi0.5_T10_hetereo \n")
+New_N1000_ephi0.5_T10_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(N = N, Time = Time, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  list(out)
+})
+save(New_N1000_ephi0.5_T10_hetereo, file = "New_N1000_ephi0.5_T10_hetereo")
+

@@ -9,6 +9,6 @@
 #SBATCH -o log-horse_race_simulations.%j 
 #SBATCH --mail-type=begin
 #SBATCH --mail-type=end
-#SBATCH --mem 64000
+#SBATCH --mem 128000
 
 srun Rscript ./new_horse_test_T10.R 

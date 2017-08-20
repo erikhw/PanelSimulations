@@ -1,0 +1,1047 @@
+---
+title: "PanelMatchSimulations_August_1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Loading packages
+```{r begin, results = 'hide', message=FALSE, warning=FALSE}
+options(digits=4)
+# clean slate
+rm(list=ls())
+# library(devtools)
+# install_github("insongkim/wfe", ref = "new_branch")
+# load packages
+pkg <- c("wfe", "ggplot2", "plm", "pforeach")
+lapply(pkg, require, character.only = TRUE)
+```
+
+## Roadmap
+This file reports simulation results for point estimates and coverage rate constructed with the following different methods:    
+1. `PanelMatch` with weights supplied by synthetic control  
+2. `PanelMatch` with weights supplied by Mahalanobis distance matching  
+3. `PanelMatch` with weights supplied by propensity score matching  
+For each simulation, we will compute both WFE standard errors and bootstrap standard errors, and check their coverage rates. We try $M = 3$ for Mahalanobis and propensity score matching throughout the simulation, but try both $L = 6$ and $L = 4$ for lag length.  
+To better evaluate the performance of our methods, we will compare them against *OLS*, *Differenced GMM* and *System GMM*.    
+Importantly, for each simulated data, we will implement our methods and the aforementioned linear models with both correctly specified and misspecified model. A misspecified model here means not including the covariate $X$ in the matching process for our methods or in the right handside of linear regression for OLS and GMM methods.   
+
+## Simulation Set-up:  
+The primary DGP, with $N = 100$ and $T = 20$, is the following:  
+$Y_{i,t} = \rho_{1}Y_{i, t-1} + 0.4*X_{1i,t} + 0*X_{2i,t} + \beta T_{it} + 0.2*T_{i, t-1} + \alpha_{i} + \gamma_{t} + \epsilon_{it}$    
+$T_{it} \sim Bernoulli(1 - P_{it})$    
+$logit(P_{it}) = 0.2*Y_{i, t-1} + 0.4* X_{1it} + 0.4*X_{2i,t} + 0.2*T_{i, t-1} + \alpha_{i} + \gamma_{t} + v_{it}$    
+$X_{1it} = .75* X_{1i,t-1} + \alpha_{i} + \gamma_{t} + z_{it}$  
+$\alpha_{i} \sim Normal(\mu = 2, \sigma^{2} = 1)$   
+$\gamma_{t} \sim Normal(\mu = 2, \sigma^{2} = 1)$  
+$\epsilon_{it} = \phi_{e} * \epsilon_{i, t-1} + u_{it}$  
+$u_{it} \sim Normal(\mu = 0.5, \sigma^{2} = 1+T_{it})$   
+$v_{it} \sim Normal(\mu = -4, \sigma^{2} = 1)$  
+$v_{it} \sim Normal(\mu = 0.8, \sigma^{2} = 1)$  
+The true treatment effect is $\beta = 1$. Note that we make the error structure both heteroskedastic, by allowing the variance of $u$ to be correlated with the treatment, and serially corrleated, by setting $\phi_{e} = 0.5$. 
+
+Two simulation scenarios are used. Throughout the simulations we let $\phi_{e} = 0.5$, imposing autocorrelation in the error term. 
+
+## Simulation Code
+```{r simulation_code,  message=FALSE, warning=FALSE, cache= TRUE, eval=FALSE}
+sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
+                      lead = 0,
+                      rho_1 = .8, rho_t_1 = .8, rho_tt_1 = .2, 
+                      rho_x = .4, rho_x2 = 0, lagTreOutc = .2, 
+                      beta = 1, beta_x = .2, beta_x2 = 0, 
+                      phi = .75, rho_t_2 = .3, ephi = .5,
+                      rho_2 = .3, M = 1, hetereo = T,
+                      ITER = 1000) {
+  y <- matrix(NA, ncol = N, nrow = Time)
+  eps <- matrix(NA, ncol = N, nrow = Time)
+  treat <- matrix(NA, ncol = N, nrow = Time)
+  y.lagged <- matrix(NA, ncol = N, nrow = Time)
+  treat.lagged <- matrix(NA, ncol = N, nrow = Time)
+  
+  alphai <- rnorm(N, mean = 6)
+  gammat <- rnorm(Time, mean = 6)
+  
+  x <- matrix(rep(NA, N*Time), ncol = N)
+  for (i in 1:N) {
+    x[1, i] <- rnorm(1, 0.5, 1) + gammat[1]
+    for(t in 2:Time){
+      x[t, i] <- phi*x[t-1, i] + rnorm(1, 0.5, 1) + gammat[t] + alphai[i]
+    }
+    
+  }
+  
+  x2 <- matrix(rep(NA, N*Time), ncol = N)
+  for (i in 1:N) {
+    x2[1, i] <- rnorm(1, 0.5, 1) + gammat[1]
+    for(t in 2:Time){
+      x2[t, i] <- phi*x2[t-1, i] + rnorm(1, 0.5, 1) + gammat[t] + alphai[i]
+    }
+    
+  }
+  
+  for (i in 1:N) {
+    y.lagged[1, i] <- rnorm(1) + alphai[i] + gammat[1]
+    treat.lagged[1,i] <- rbinom(1,1,exp(rho_x*x[1,i] + rho_x2*x2[1,i] + alphai[i] + gammat[1])/(1+exp(rho_x*x[1,i] + rho_x2*x2[1,i] + alphai[i] + gammat[1])))
+    # think about commenting out treat.error
+    # treat.error <- -4 #rnorm(1,-4)
+    prob <- exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1])/
+      (1+exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1]))
+    treat[1,i] <- rbinom(1,1, prob/2)
+    eps[1, i] <- rnorm(1)
+    y[1,i] <- rho_1*y.lagged[1,i] + alphai[i] + gammat[1] + 
+      beta*treat[1,i] + lagTreOutc*treat.lagged[1,i] + beta_x*x[1,i] + beta_x2*x2[1,i] +
+      eps[1,i]
+    
+    for (t in 2:Time) {
+      # treat.error <- -4 #rnorm(1,-4)
+      prob <- exp(rho_t_1*y[t-1,i] + alphai[i] + rho_tt_1*treat[t-1,i] + rho_x*x[t,i] + rho_x2*x2[t,i] +gammat[t])/
+        (1+exp(rho_t_1*y[t-1,i] + alphai[i] + rho_tt_1*treat[t-1,i] + rho_x*x[t,i] + rho_x2*x2[t,i] + gammat[t]))
+      treat[t,i] <- rbinom(1,1, prob/2)
+      treat.lagged[t,i] <- treat[t-1,i]
+      
+      if(hetereo == T) {
+        eps[t, i] <- ephi*eps[t-1, i] + rnorm(n = 1, mean = 0, sd = runif(1, 0, 1))
+      } else {
+        eps[t, i] <- ephi*eps[t-1, i] + rnorm(n = 1, mean = 0, sd = 1)
+      }
+      
+      # truth:
+      y[t, i] <- rho_1*y[t-1, i] + beta*treat[t,i] + lagTreOutc*treat[t-1,i] + beta_x*x[t,i] + beta_x2*x2[t,i] + 
+        alphai[i] + gammat[t] + eps[t, i] # the current period
+      
+      y.lagged[t,i] <- y[t-1,i]
+    }
+    
+  }
+  y.vec <- c(y)
+  y.lagged.vec <- c(y.lagged)
+  treat.vec <- c(treat)
+  treat.lagged.vec <- c(treat.lagged)
+  x.vec <- c(x)
+  #y2.vec <- c(y2)
+  ## generate unit and time index
+  unit.index <- rep(1:N, each = Time)
+  time.index <- rep(1:Time, N)
+  # Data.str <- as.data.frame(cbind(y.vec, treat.vec, unit.index, x1.vec, x2.vec))
+  # colnames(Data.str) <- c("y", "tr", "strata.id", "x1", "x2")
+  Data.obs <- as.data.frame(cbind(time.index, unit.index, y.vec, y.lagged.vec,
+                                  treat.vec, treat.lagged.vec, x.vec))
+  colnames(Data.obs) <- c("time", "unit", "y", "y_l1", "treat", "treat_l1", "x")
+  ##### L = 4
+  ### Correct Models:
+  ## matched sets
+  cat("\n ----------------------- \n")
+  cat("Matches_Maha_lag.one \n")
+  cat("\n ----------------------- \n")
+  Matches_Maha_lag.one <- tryCatch(PanelMatch(lag = lag.one, max.lead = lead, time.id = "time", 
+                                              unit.id = "unit",
+                                              treatment = "treat", 
+                                              formula = y~treat + x, 
+                                              method = "Maha",
+                                              qoi = "ate", M = M,
+                                              data = Data.obs), 
+                                   error = function(err) NA)
+  
+  cat("\n ----------------------- \n")
+  cat("Matches_Pscore_lag.one \n")
+  cat("\n ----------------------- \n")
+  
+  Matches_Pscore_lag.one <- tryCatch(PanelMatch(lag = lag.one, max.lead = lead, time.id = "time", 
+                                                unit.id = "unit",
+                                                treatment = "treat", formula = y ~ treat + x, 
+                                                method = "Pscore",
+                                                qoi = "ate", M = M,
+                                                data = Data.obs),
+                                     error = function(err) NA)
+  
+  cat("\n ----------------------- \n")
+  cat("Matches_Synth_lag.one \n")
+  cat("\n ----------------------- \n")
+  Matches_Synth_lag.one <- tryCatch(PanelMatch(lag = lag.one, max.lead = lead, time.id = "time", 
+                                               unit.id = "unit",
+                                               treatment = "treat", formula = y ~ treat + x, 
+                                               method = "Synth",
+                                               qoi = "ate", 
+                                               data = Data.obs),
+                                    error = function(err) NA)
+  
+  
+  cat("\n ----------------------- \n")
+  cat("Synth_wfe_lag.one \n")
+  cat("\n ----------------------- \n")
+  
+  ### PanelEstimate ###
+  Synth_wfe_lag.one <- tryCatch(PanelEstimate_tmp2(lead = lead, 
+                                                   inference = "wfe",
+                                                   matched_sets = Matches_Synth_lag.one),
+                                error = function(err) NA)
+  
+  
+  cat("\n ----------------------- \n")
+  cat("Maha_wfe_lag.one \n")
+  cat("\n ----------------------- \n")
+  
+  Maha_wfe_lag.one <- tryCatch(PanelEstimate_tmp2(lead = lead, inference = "wfe",
+                                                  matched_sets = Matches_Maha_lag.one),
+                               error = function(err) NA)
+  
+  
+  
+  cat("\n ----------------------- \n")
+  cat("Pscore_wfe_lag.one \n")
+  cat("\n ----------------------- \n")
+  
+  Pscore_wfe_lag.one <- tryCatch(PanelEstimate_tmp2(lead = lead, 
+                                                    inference = "wfe",
+                                                    matched_sets = Matches_Pscore_lag.one),
+                                 error = function(err) NA)
+  
+  ##### L = 6
+  ### Correct Models:
+  ## matched sets
+  
+  cat("\n ----------------------- \n")
+  cat("Matches_Maha_lag.two \n")
+  cat("\n ----------------------- \n")
+  
+  Matches_Maha_lag.two <- tryCatch(PanelMatch(lag = lag.two, max.lead = lead, time.id = "time", 
+                                              unit.id = "unit",
+                                              treatment = "treat", 
+                                              formula = y~treat + x, 
+                                              method = "Maha",
+                                              qoi = "ate", M = M,
+                                              data = Data.obs), 
+                                   error = function(err) NA)
+  
+  cat("\n ----------------------- \n")
+  cat("Matches_Pscore_lag.two \n")
+  cat("\n ----------------------- \n")
+  
+  
+  Matches_Pscore_lag.two <- tryCatch(PanelMatch(lag = lag.two, max.lead = lead, time.id = "time", 
+                                                unit.id = "unit",
+                                                treatment = "treat", formula = y ~ treat + x, 
+                                                method = "Pscore",
+                                                qoi = "ate", M = M,
+                                                data = Data.obs),
+                                     error = function(err) NA)
+  
+  cat("\n ----------------------- \n")
+  cat("Matches_Synth_lag.two \n")
+  cat("\n ----------------------- \n")
+  
+  Matches_Synth_lag.two <- tryCatch(PanelMatch(lag = lag.two, max.lead = lead, time.id = "time", 
+                                               unit.id = "unit",
+                                               treatment = "treat", formula = y ~ treat + x, 
+                                               method = "Synth",
+                                               qoi = "ate", 
+                                               data = Data.obs),
+                                    error = function(err) NA)
+  
+  
+  ### PanelEstimate ###
+  
+  cat("\n ----------------------- \n")
+  cat("Synth_wfe_lag.two \n")
+  cat("\n ----------------------- \n")
+  
+  Synth_wfe_lag.two <- tryCatch(PanelEstimate_tmp2(lead = lead, 
+                                                   inference = "wfe",
+                                                   matched_sets = Matches_Synth_lag.two),
+                                error = function(err) NA)
+  
+  
+  cat("\n ----------------------- \n")
+  cat("Maha_wfe_lag.two \n")
+  cat("\n ----------------------- \n")
+  
+  Maha_wfe_lag.two <- tryCatch(PanelEstimate_tmp2(lead = lead, inference = "wfe",
+                                                  matched_sets = Matches_Maha_lag.two),
+                               error = function(err) NA)
+  
+  cat("\n ----------------------- \n")
+  cat("Pscore_wfe_lag.two \n")
+  cat("\n ----------------------- \n")
+  
+  Pscore_wfe_lag.two <- tryCatch(PanelEstimate_tmp2(lead = lead, 
+                                                    inference = "wfe",
+                                                    matched_sets = Matches_Pscore_lag.two),
+                                 error = function(err) NA)
+  
+  
+  cat("\n ----------------------- \n")
+  cat("ols \n")
+  cat("\n ----------------------- \n")
+  if(rho_tt_1 == 0 & lagTreOutc == 0) {
+    ols <- tryCatch(plm(y~treat + y_l1 + x, 
+                        index = c("unit","time"), model = "within", 
+                        effect = "twoways",
+                        data = Data.obs), error = function(err) NA)
+  } else {
+    ols <- tryCatch(plm(y~treat + y_l1 + treat_l1 + x, 
+                        index = c("unit","time"), model = "within", 
+                        effect = "twoways",
+                        data = Data.obs), error = function(err) NA)
+  }
+  
+  
+  cat("\n ----------------------- \n")
+  cat("summarizing stuff \n")
+  cat("\n ----------------------- \n")
+  
+  Synth_wfe_lag.one_se  <- tryCatch(Synth_wfe_lag.one$se, error = function(err) NA)
+  Synth_wfe_lag.one_coef  <- tryCatch(Synth_wfe_lag.one$coefficients[1], error = function(err) NA)
+  
+  Maha_wfe_lag.one_se  <- tryCatch(Maha_wfe_lag.one$se, error = function(err) NA)
+  Maha_wfe_lag.one_coef  <- tryCatch(Maha_wfe_lag.one$coefficients[1], error = function(err) NA)
+  
+  Pscore_wfe_lag.one_se  <- tryCatch(Pscore_wfe_lag.one$se, error = function(err) NA)
+  Pscore_wfe_lag.one_coef  <- tryCatch(Pscore_wfe_lag.one$coefficients[1], error = function(err) NA)
+  
+  Synth_wfe_lag.two_se  <- tryCatch(Synth_wfe_lag.two$se, error = function(err) NA)
+  Synth_wfe_lag.two_coef  <- tryCatch(Synth_wfe_lag.two$coefficients[1], error = function(err) NA)
+  
+  Maha_wfe_lag.two_se  <- tryCatch(Maha_wfe_lag.two$se, error = function(err) NA)
+  Maha_wfe_lag.two_coef  <- tryCatch(Maha_wfe_lag.two$coefficients[1], error = function(err) NA)
+  
+  Pscore_wfe_lag.two_se  <- tryCatch(Pscore_wfe_lag.two$se, error = function(err) NA)
+  Pscore_wfe_lag.two_coef  <- tryCatch(Pscore_wfe_lag.two$coefficients[1], error = function(err) NA)
+  
+  ols_coef  <- tryCatch(ols$coefficients[1], error = function(err) NA)
+  ols_se  <- tryCatch(sqrt(ols$vcov["treat", "treat"]), error = function(err) NA)
+  
+  return(list("Synth_wfe_lag.one_se" = Synth_wfe_lag.one_se,
+              "Synth_wfe_lag.one_coef" = Synth_wfe_lag.one_coef,
+              
+              "Maha_wfe_lag.one_se" = Maha_wfe_lag.one_se,
+              "Maha_wfe_lag.one_coef" = Maha_wfe_lag.one_coef,
+              
+              "Pscore_wfe_lag.one_se" = Pscore_wfe_lag.one_se,
+              "Pscore_wfe_lag.one_coef" = Pscore_wfe_lag.one_coef,
+              
+              "Synth_wfe_lag.two_se" = Synth_wfe_lag.two_se,
+              "Synth_wfe_lag.two_coef" = Synth_wfe_lag.two_coef,
+              
+              "Maha_wfe_lag.two_se" = Maha_wfe_lag.two_se,
+              "Maha_wfe_lag.two_coef" = Maha_wfe_lag.two_coef,
+              
+              "Pscore_wfe_lag.two_se" = Pscore_wfe_lag.two_se,
+              "Pscore_wfe_lag.two_coef" = Pscore_wfe_lag.two_coef,
+              
+              "ols_coef" = ols_coef,
+              "ols_se" = ols_se
+              # "ols_coef_mis" = ols_coef_mis,
+              # "ols_se_mis" = ols_se_mis,
+              # "gmm_d_coef" = gmm_d_coef,
+              # "gmm_d_se" = gmm_d_se,
+              # "gmm_s_coef" = gmm_s_coef,
+              # "gmm_s_se" = gmm_s_se
+              # "gmm_d_mis_coef" = gmm_d_mis_coef,
+              # "gmm_d_mis_se" = gmm_d_mis_se,
+              # "gmm_s_mis_coef" = gmm_s_mis_coef,
+              # "gmm_s_mis_se" = gmm_s_mis_se
+  ))
+  
+}
+```
+
+## Results
+```{r echo = FALSE, results = 'hide', cache=TRUE, message = FALSE}
+load("horse_hetereo_N100T20_1") 
+load("horse_hetereo_N100T20_2") 
+load("horse_hetereo_N100T20_3") 
+load("horse_hetereo_N100T20_4") 
+horse <- c(horse_hetereo_N100T20_1, horse_hetereo_N100T20_2,
+           horse_hetereo_N100T20_3, horse_hetereo_N100T20_4)
+
+# Filtering out errors
+horse <- Filter(function (x) length(x) > 1, horse)
+horse <- Filter(function (x) sum(is.na(x)) == 0, horse)
+
+
+## L = 4, wfe synth
+Synth_wfe_lag.one_coef <- mean(sapply(horse, function (x) mean(x$Synth_wfe_lag.one_coef)), na.rm = T)
+coverage_Synth_wfe_lag.one_coverage <- rep(NA, length(horse))
+for (i in 1:length(horse)) {
+  if (horse[[i]]$Synth_wfe_lag.one_coef - horse[[i]]$Synth_wfe_lag.one_se * qnorm(.95) < 1 &
+      horse[[i]]$Synth_wfe_lag.one_coef + horse[[i]]$Synth_wfe_lag.one_se * qnorm(.95) > 1) {
+    coverage_Synth_wfe_lag.one_coverage[i] <- 1
+  } else {
+    coverage_Synth_wfe_lag.one_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_Synth_wfe_lag.one_coverage)*100
+
+## L = 4, wfe boot
+Synth_boot_lag.one_coef <- mean(sapply(horse, function (x) mean(x$Synth_boot_lag.one_coef)), na.rm = T)
+Synth_boot_lag.one_coef
+Synth_boot_lag.one_coverage <- rep(NA, length(horse))
+ for (i in 1:length(horse)) {
+   if (quantile(horse[[i]]$Synth_boot_lag.one_boots, c(.05, .95), na.rm = T)[1] < 1 &
+       quantile(horse[[i]]$Synth_boot_lag.one_boots, c(.05, .95), na.rm = T)[2] > 1) {
+     Synth_boot_lag.one_coverage[i] <- 1
+   } else {
+     Synth_boot_lag.one_coverage[i] <- 0
+   }
+   
+}
+mean(Synth_boot_lag.one_coverage)*100
+
+
+## L = 4, wfe Maha
+Maha_wfe_lag.one_coef <- mean(sapply(horse, function (x) mean(x$Maha_wfe_lag.one_coef)), na.rm = T)
+Maha_wfe_lag.one_coef
+coverage_Maha_wfe_lag.one_coverage <- rep(NA, length(horse))
+for (i in 1:length(horse)) {
+  if (horse[[i]]$Maha_wfe_lag.one_coef - horse[[i]]$Maha_wfe_lag.one_se * qnorm(.95) < 1 &
+      horse[[i]]$Maha_wfe_lag.one_coef + horse[[i]]$Maha_wfe_lag.one_se * qnorm(.95) > 1) {
+    coverage_Maha_wfe_lag.one_coverage[i] <- 1
+  } else {
+    coverage_Maha_wfe_lag.one_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_Maha_wfe_lag.one_coverage)*100
+
+## L = 4, boot Maha
+Maha_boot_lag.one_coef <- mean(sapply(horse, function (x) mean(x$Maha_boot_lag.one_coef)), na.rm = T)
+Maha_boot_lag.one_coef
+Maha_boot_lag.one_coverage <- rep(NA, length(horse))
+ for (i in 1:length(horse)) {
+   if (quantile(horse[[i]]$Maha_boot_lag.one_boots, c(.05, .95), na.rm = T)[1] < 1 &
+       quantile(horse[[i]]$Maha_boot_lag.one_boots, c(.05, .95), na.rm = T)[2] > 1) {
+     Maha_boot_lag.one_coverage[i] <- 1
+   } else {
+     Maha_boot_lag.one_coverage[i] <- 0
+   }
+   
+}
+mean(Maha_boot_lag.one_coverage)*100
+
+## L = 4, wfe Pscore
+Pscore_wfe_lag.one_coef <- mean(sapply(horse, function (x) mean(x$Pscore_wfe_lag.one_coef)), na.rm = T)
+Pscore_wfe_lag.one_coef
+coverage_Pscore_wfe_lag.one_coverage <- rep(NA, length(horse))
+
+for (i in 1:length(horse)) {
+  if (horse[[i]]$Pscore_wfe_lag.one_coef - horse[[i]]$Pscore_wfe_lag.one_se * qnorm(.95) < 1 &
+      horse[[i]]$Pscore_wfe_lag.one_coef + horse[[i]]$Pscore_wfe_lag.one_se * qnorm(.95) > 1) {
+    coverage_Pscore_wfe_lag.one_coverage[i] <- 1
+  } else {
+    coverage_Pscore_wfe_lag.one_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_Pscore_wfe_lag.one_coverage, na.rm = T)*100
+
+## L = 4, boot Pscore
+Pscore_boot_lag.one_coef <- mean(sapply(horse, function (x) mean(x$Pscore_boot_lag.one_coef)), na.rm = T)
+Pscore_boot_lag.one_coef
+Pscore_boot_lag.one_coverage <- rep(NA, length(horse))
+ for (i in 1:length(horse)) {
+   if (quantile(horse[[i]]$Pscore_boot_lag.one_boots, c(.05, .95), na.rm = T)[1] < 1 &
+       quantile(horse[[i]]$Pscore_boot_lag.one_boots, c(.05, .95), na.rm = T)[2] > 1) {
+     Pscore_boot_lag.one_coverage[i] <- 1
+   } else {
+     Pscore_boot_lag.one_coverage[i] <- 0
+   }
+   
+}
+mean(Pscore_boot_lag.one_coverage)*100
+
+# OLS
+ols_coef <- mean(sapply(horse, function (x) mean(x$ols_coef)), na.rm = T)
+ols_coef
+coverage_ols_coverage <- rep(NA, length(horse))
+for (i in 1:length(horse)) {
+  if (horse[[i]]$ols_coef - horse[[i]]$ols_se * qnorm(.95) < 1 &
+      horse[[i]]$ols_coef + horse[[i]]$ols_se * qnorm(.95) > 1) {
+    coverage_ols_coverage[i] <- 1
+  } else {
+    coverage_ols_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_ols_coverage)*100
+
+# Diff_GMM
+gmm_d_coef <- mean(sapply(horse, function (x) mean(x$gmm_d_coef)), na.rm = T)
+gmm_d_coef
+coverage_gmm_d_coverage <- rep(NA, length(horse))
+for (i in 1:length(horse)) {
+  if (horse[[i]]$gmm_d_coef - horse[[i]]$gmm_d_se * qnorm(.95) < 1 &
+      horse[[i]]$gmm_d_coef + horse[[i]]$gmm_d_se * qnorm(.95) > 1) {
+    coverage_gmm_d_coverage[i] <- 1
+  } else {
+    coverage_gmm_d_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_gmm_d_coverage)*100
+
+# System_GMM
+gmm_s_coef <- mean(sapply(horse, function (x) mean(x$gmm_s_coef)), na.rm = T)
+gmm_s_coef
+coverage_gmm_s_coverage <- rep(NA, length(horse))
+for (i in 1:length(horse)) {
+  if (horse[[i]]$gmm_s_coef - horse[[i]]$gmm_s_se * qnorm(.95) < 1 &
+      horse[[i]]$gmm_s_coef + horse[[i]]$gmm_s_se * qnorm(.95) > 1) {
+    coverage_gmm_s_coverage[i] <- 1
+  } else {
+    coverage_gmm_s_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_gmm_s_coverage)*100
+
+
+```
+
+```{R, echo = FALSE, cache = TRUE} 
+# 
+gmm_s <- c(gmm_s_coef, mean(coverage_gmm_s_coverage) * 100)
+gmm_d <- c(gmm_d_coef, mean(coverage_gmm_d_coverage) * 100)
+
+ols <- c(ols_coef, mean(coverage_ols_coverage) * 100)
+
+
+Pscore_boot_lag.one <- c(Pscore_boot_lag.one_coef, mean(Pscore_boot_lag.one_coverage) * 100)
+Pscore_wfe_lag.one <- c(Pscore_wfe_lag.one_coef, mean(coverage_Pscore_wfe_lag.one_coverage) * 100)
+
+Maha_wfe_lag.one <- c(Maha_wfe_lag.one_coef, mean(coverage_Maha_wfe_lag.one_coverage) * 100)
+Maha_boot_lag.one <- c(Maha_boot_lag.one_coef, mean(Maha_boot_lag.one_coverage) * 100)
+
+
+Synth_wfe_lag.one <- c(Synth_wfe_lag.one_coef, mean(coverage_Synth_wfe_lag.one_coverage) * 100)
+Synth_boot_lag.one <- c(Synth_boot_lag.one_coef, mean(Synth_boot_lag.one_coverage) * 100)
+
+```
+
+```{R table_lag.one, cache = TRUE}
+parameters <- c("point estimate", "Coverage")
+table_lag.one <- cbind(parameters, ols, gmm_d, 
+                              gmm_s, 
+                              Synth_wfe_lag.one,Synth_boot_lag.one,
+                             Maha_wfe_lag.one, Maha_boot_lag.one,
+                             Pscore_wfe_lag.one, Pscore_boot_lag.one)
+table_lag.one <- as.data.frame(table_lag.one)
+knitr::kable(table_lag.one)
+```
+
+```{r doing_lag.two, echo = FALSE, results = 'hide', cache=TRUE, message = FALSE}
+## L = 4, wfe synth
+Synth_wfe_lag.two_coef <- mean(sapply(horse, function (x) mean(x$Synth_wfe_lag.two_coef)), na.rm = T)
+coverage_Synth_wfe_lag.two_coverage <- rep(NA, length(horse))
+for (i in 1:length(horse)) {
+  if (horse[[i]]$Synth_wfe_lag.two_coef - horse[[i]]$Synth_wfe_lag.two_se * qnorm(.95) < 1 &
+      horse[[i]]$Synth_wfe_lag.two_coef + horse[[i]]$Synth_wfe_lag.two_se * qnorm(.95) > 1) {
+    coverage_Synth_wfe_lag.two_coverage[i] <- 1
+  } else {
+    coverage_Synth_wfe_lag.two_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_Synth_wfe_lag.two_coverage)*100
+
+## L = 4, wfe boot
+Synth_boot_lag.two_coef <- mean(sapply(horse, function (x) mean(x$Synth_boot_lag.two_coef)), na.rm = T)
+Synth_boot_lag.two_coef
+Synth_boot_lag.two_coverage <- rep(NA, length(horse))
+ for (i in 1:length(horse)) {
+   if (quantile(horse[[i]]$Synth_boot_lag.two_boots, c(.05, .95), na.rm = T)[1] < 1 &
+       quantile(horse[[i]]$Synth_boot_lag.two_boots, c(.05, .95), na.rm = T)[2] > 1) {
+     Synth_boot_lag.two_coverage[i] <- 1
+   } else {
+     Synth_boot_lag.two_coverage[i] <- 0
+   }
+   
+}
+mean(Synth_boot_lag.two_coverage)*100
+
+
+## L = 4, wfe Maha
+Maha_wfe_lag.two_coef <- mean(sapply(horse, function (x) mean(x$Maha_wfe_lag.two_coef)), na.rm = T)
+Maha_wfe_lag.two_coef
+coverage_Maha_wfe_lag.two_coverage <- rep(NA, length(horse))
+for (i in 1:length(horse)) {
+  if (horse[[i]]$Maha_wfe_lag.two_coef - horse[[i]]$Maha_wfe_lag.two_se * qnorm(.95) < 1 &
+      horse[[i]]$Maha_wfe_lag.two_coef + horse[[i]]$Maha_wfe_lag.two_se * qnorm(.95) > 1) {
+    coverage_Maha_wfe_lag.two_coverage[i] <- 1
+  } else {
+    coverage_Maha_wfe_lag.two_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_Maha_wfe_lag.two_coverage)*100
+
+## L = 4, boot Maha
+Maha_boot_lag.two_coef <- mean(sapply(horse, function (x) mean(x$Maha_boot_lag.two_coef)), na.rm = T)
+Maha_boot_lag.two_coef
+Maha_boot_lag.two_coverage <- rep(NA, length(horse))
+ for (i in 1:length(horse)) {
+   if (quantile(horse[[i]]$Maha_boot_lag.two_boots, c(.05, .95), na.rm = T)[1] < 1 &
+       quantile(horse[[i]]$Maha_boot_lag.two_boots, c(.05, .95), na.rm = T)[2] > 1) {
+     Maha_boot_lag.two_coverage[i] <- 1
+   } else {
+     Maha_boot_lag.two_coverage[i] <- 0
+   }
+   
+}
+mean(Maha_boot_lag.two_coverage)*100
+
+## L = 4, wfe Pscore
+Pscore_wfe_lag.two_coef <- mean(sapply(horse, function (x) mean(x$Pscore_wfe_lag.two_coef)), na.rm = T)
+Pscore_wfe_lag.two_coef
+coverage_Pscore_wfe_lag.two_coverage <- rep(NA, length(horse))
+
+for (i in 1:length(horse)) {
+  if (horse[[i]]$Pscore_wfe_lag.two_coef - horse[[i]]$Pscore_wfe_lag.two_se * qnorm(.95) < 1 &
+      horse[[i]]$Pscore_wfe_lag.two_coef + horse[[i]]$Pscore_wfe_lag.two_se * qnorm(.95) > 1) {
+    coverage_Pscore_wfe_lag.two_coverage[i] <- 1
+  } else {
+    coverage_Pscore_wfe_lag.two_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_Pscore_wfe_lag.two_coverage, na.rm = T)*100
+
+## L = 4, boot Pscore
+Pscore_boot_lag.two_coef <- mean(sapply(horse, function (x) mean(x$Pscore_boot_lag.two_coef)), na.rm = T)
+Pscore_boot_lag.two_coef
+Pscore_boot_lag.two_coverage <- rep(NA, length(horse))
+ for (i in 1:length(horse)) {
+   if (quantile(horse[[i]]$Pscore_boot_lag.two_boots, c(.05, .95), na.rm = T)[1] < 1 &
+       quantile(horse[[i]]$Pscore_boot_lag.two_boots, c(.05, .95), na.rm = T)[2] > 1) {
+     Pscore_boot_lag.two_coverage[i] <- 1
+   } else {
+     Pscore_boot_lag.two_coverage[i] <- 0
+   }
+   
+}
+mean(Pscore_boot_lag.two_coverage)*100
+
+# OLS
+ols_coef <- mean(sapply(horse, function (x) mean(x$ols_coef)), na.rm = T)
+ols_coef
+coverage_ols_coverage <- rep(NA, length(horse))
+for (i in 1:length(horse)) {
+  if (horse[[i]]$ols_coef - horse[[i]]$ols_se * qnorm(.95) < 1 &
+      horse[[i]]$ols_coef + horse[[i]]$ols_se * qnorm(.95) > 1) {
+    coverage_ols_coverage[i] <- 1
+  } else {
+    coverage_ols_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_ols_coverage)*100
+
+# Diff_GMM
+gmm_d_coef <- mean(sapply(horse, function (x) mean(x$gmm_d_coef)), na.rm = T)
+gmm_d_coef
+coverage_gmm_d_coverage <- rep(NA, length(horse))
+for (i in 1:length(horse)) {
+  if (horse[[i]]$gmm_d_coef - horse[[i]]$gmm_d_se * qnorm(.95) < 1 &
+      horse[[i]]$gmm_d_coef + horse[[i]]$gmm_d_se * qnorm(.95) > 1) {
+    coverage_gmm_d_coverage[i] <- 1
+  } else {
+    coverage_gmm_d_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_gmm_d_coverage)*100
+
+# System_GMM
+gmm_s_coef <- mean(sapply(horse, function (x) mean(x$gmm_s_coef)), na.rm = T)
+gmm_s_coef
+coverage_gmm_s_coverage <- rep(NA, length(horse))
+for (i in 1:length(horse)) {
+  if (horse[[i]]$gmm_s_coef - horse[[i]]$gmm_s_se * qnorm(.95) < 1 &
+      horse[[i]]$gmm_s_coef + horse[[i]]$gmm_s_se * qnorm(.95) > 1) {
+    coverage_gmm_s_coverage[i] <- 1
+  } else {
+    coverage_gmm_s_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_gmm_s_coverage)*100
+
+# 
+gmm_s <- c(gmm_s_coef, mean(coverage_gmm_s_coverage) * 100)
+gmm_d <- c(gmm_d_coef, mean(coverage_gmm_d_coverage) * 100)
+
+ols <- c(ols_coef, mean(coverage_ols_coverage) * 100)
+
+
+Pscore_boot_lag.two <- c(Pscore_boot_lag.two_coef, mean(Pscore_boot_lag.two_coverage) * 100)
+Pscore_wfe_lag.two <- c(Pscore_wfe_lag.two_coef, mean(coverage_Pscore_wfe_lag.two_coverage) * 100)
+
+Maha_wfe_lag.two <- c(Maha_wfe_lag.two_coef, mean(coverage_Maha_wfe_lag.two_coverage) * 100)
+Maha_boot_lag.two <- c(Maha_boot_lag.two_coef, mean(Maha_boot_lag.two_coverage) * 100)
+
+
+Synth_wfe_lag.two <- c(Synth_wfe_lag.two_coef, mean(coverage_Synth_wfe_lag.two_coverage) * 100)
+Synth_boot_lag.two <- c(Synth_boot_lag.two_coef, mean(Synth_boot_lag.two_coverage) * 100)
+```
+```{R cache = TRUE}
+parameters <- c("point estimate", "Coverage")
+table_lag.two <- cbind(parameters, ols, gmm_d, 
+                              gmm_s, 
+                              Synth_wfe_lag.two,Synth_boot_lag.two,
+                             Maha_wfe_lag.two, Maha_boot_lag.two,
+                             Pscore_wfe_lag.two, Pscore_boot_lag.two)
+```
+
+```{R table_lag.two, cache = TRUE, echo = FALSE}
+table_lag.two <- as.data.frame(table_lag.two)
+knitr::kable(table_lag.two)
+
+```
+
+
+
+
+```{r doing_lag.two_mis, echo = FALSE, results = 'hide', cache=TRUE, message = FALSE}
+## L = 4, wfe synth
+Synth_wfe_lag.two_mis_coef <- mean(sapply(horse, function (x) mean(x$Synth_wfe_lag.two_mis_coef)), na.rm = T)
+coverage_Synth_wfe_lag.two_mis_coverage <- rep(NA, length(horse))
+for (i in 1:length(horse)) {
+  if (horse[[i]]$Synth_wfe_lag.two_mis_coef - horse[[i]]$Synth_wfe_lag.two_mis_se * qnorm(.95) < 1 &
+      horse[[i]]$Synth_wfe_lag.two_mis_coef + horse[[i]]$Synth_wfe_lag.two_mis_se * qnorm(.95) > 1) {
+    coverage_Synth_wfe_lag.two_mis_coverage[i] <- 1
+  } else {
+    coverage_Synth_wfe_lag.two_mis_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_Synth_wfe_lag.two_mis_coverage)*100
+
+## L = 4, wfe boot
+Synth_boot_lag.two_mis_coef <- mean(sapply(horse, function (x) mean(x$Synth_boot_lag.two_mis_coef)), na.rm = T)
+Synth_boot_lag.two_mis_coef
+Synth_boot_lag.two_mis_coverage <- rep(NA, length(horse))
+ for (i in 1:length(horse)) {
+   if (quantile(horse[[i]]$Synth_boot_lag.two_mis_boots, c(.05, .95), na.rm = T)[1] < 1 &
+       quantile(horse[[i]]$Synth_boot_lag.two_mis_boots, c(.05, .95), na.rm = T)[2] > 1) {
+     Synth_boot_lag.two_mis_coverage[i] <- 1
+   } else {
+     Synth_boot_lag.two_mis_coverage[i] <- 0
+   }
+   
+}
+mean(Synth_boot_lag.two_mis_coverage)*100
+
+
+## L = 4, wfe Maha
+Maha_wfe_lag.two_mis_coef <- mean(sapply(horse, function (x) mean(x$Maha_wfe_lag.two_mis_coef)), na.rm = T)
+Maha_wfe_lag.two_mis_coef
+coverage_Maha_wfe_lag.two_mis_coverage <- rep(NA, length(horse))
+for (i in 1:length(horse)) {
+  if (horse[[i]]$Maha_wfe_lag.two_mis_coef - horse[[i]]$Maha_wfe_lag.two_mis_se * qnorm(.95) < 1 &
+      horse[[i]]$Maha_wfe_lag.two_mis_coef + horse[[i]]$Maha_wfe_lag.two_mis_se * qnorm(.95) > 1) {
+    coverage_Maha_wfe_lag.two_mis_coverage[i] <- 1
+  } else {
+    coverage_Maha_wfe_lag.two_mis_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_Maha_wfe_lag.two_mis_coverage)*100
+
+## L = 4, boot Maha
+Maha_boot_lag.two_mis_coef <- mean(sapply(horse, function (x) mean(x$Maha_boot_lag.two_mis_coef)), na.rm = T)
+Maha_boot_lag.two_mis_coef
+Maha_boot_lag.two_mis_coverage <- rep(NA, length(horse))
+ for (i in 1:length(horse)) {
+   if (quantile(horse[[i]]$Maha_boot_lag.two_mis_boots, c(.05, .95), na.rm = T)[1] < 1 &
+       quantile(horse[[i]]$Maha_boot_lag.two_mis_boots, c(.05, .95), na.rm = T)[2] > 1) {
+     Maha_boot_lag.two_mis_coverage[i] <- 1
+   } else {
+     Maha_boot_lag.two_mis_coverage[i] <- 0
+   }
+   
+}
+mean(Maha_boot_lag.two_mis_coverage)*100
+
+## L = 4, wfe Pscore
+Pscore_wfe_lag.two_mis_coef <- mean(sapply(horse, function (x) mean(x$Pscore_wfe_lag.two_mis_coef)), na.rm = T)
+Pscore_wfe_lag.two_mis_coef
+coverage_Pscore_wfe_lag.two_mis_coverage <- rep(NA, length(horse))
+
+for (i in 1:length(horse)) {
+  if (horse[[i]]$Pscore_wfe_lag.two_mis_coef - horse[[i]]$Pscore_wfe_lag.two_mis_se * qnorm(.95) < 1 &
+      horse[[i]]$Pscore_wfe_lag.two_mis_coef + horse[[i]]$Pscore_wfe_lag.two_mis_se * qnorm(.95) > 1) {
+    coverage_Pscore_wfe_lag.two_mis_coverage[i] <- 1
+  } else {
+    coverage_Pscore_wfe_lag.two_mis_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_Pscore_wfe_lag.two_mis_coverage, na.rm = T)*100
+
+## L = 4, boot Pscore
+Pscore_boot_lag.two_mis_coef <- mean(sapply(horse, function (x) mean(x$Pscore_boot_lag.two_mis_coef)), na.rm = T)
+Pscore_boot_lag.two_mis_coef
+Pscore_boot_lag.two_mis_coverage <- rep(NA, length(horse))
+ for (i in 1:length(horse)) {
+   if (quantile(horse[[i]]$Pscore_boot_lag.two_mis_boots, c(.05, .95), na.rm = T)[1] < 1 &
+       quantile(horse[[i]]$Pscore_boot_lag.two_mis_boots, c(.05, .95), na.rm = T)[2] > 1) {
+     Pscore_boot_lag.two_mis_coverage[i] <- 1
+   } else {
+     Pscore_boot_lag.two_mis_coverage[i] <- 0
+   }
+   
+}
+mean(Pscore_boot_lag.two_mis_coverage)*100
+
+# OLS
+ols_coef_mis <- mean(sapply(horse, function (x) mean(x$ols_coef_mis)), na.rm = T)
+ols_coef_mis
+coverage_ols_mis_coverage <- rep(NA, length(horse))
+for (i in 1:length(horse)) {
+  if (horse[[i]]$ols_coef_mis - horse[[i]]$ols_se_mis * qnorm(.95) < 1 &
+      horse[[i]]$ols_coef_mis + horse[[i]]$ols_se_mis * qnorm(.95) > 1) {
+    coverage_ols_mis_coverage[i] <- 1
+  } else {
+    coverage_ols_mis_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_ols_mis_coverage)*100
+
+# Diff_GMM
+gmm_d_mis_coef <- mean(sapply(horse, function (x) mean(x$gmm_d_mis_coef)))
+gmm_d_mis_coef
+coverage_gmm_d_mis_coverage <- rep(NA, length(horse))
+for (i in 1:length(horse)) {
+  if (horse[[i]]$gmm_d_mis_coef - horse[[i]]$gmm_d_mis_se * qnorm(.95) < 1 &
+      horse[[i]]$gmm_d_mis_coef + horse[[i]]$gmm_d_mis_se * qnorm(.95) > 1) {
+    coverage_gmm_d_mis_coverage[i] <- 1
+  } else {
+    coverage_gmm_d_mis_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_gmm_d_mis_coverage)*100
+
+# System_GMM
+gmm_s_mis_coef <- mean(sapply(horse, function (x) mean(x$gmm_s_mis_coef)), na.rm = T)
+gmm_s_mis_coef
+coverage_gmm_s_mis_coverage <- rep(NA, length(horse))
+for (i in 1:length(horse)) {
+  if (horse[[i]]$gmm_s_mis_coef - horse[[i]]$gmm_s_mis_se * qnorm(.95) < 1 &
+      horse[[i]]$gmm_s_mis_coef + horse[[i]]$gmm_s_mis_se * qnorm(.95) > 1) {
+    coverage_gmm_s_mis_coverage[i] <- 1
+  } else {
+    coverage_gmm_s_mis_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_gmm_s_mis_coverage)*100
+
+# 
+gmm_s_mis <- c(gmm_s_mis_coef, mean(coverage_gmm_s_mis_coverage) * 100)
+gmm_d_mis <- c(gmm_d_mis_coef, mean(coverage_gmm_d_mis_coverage) * 100)
+
+ols_mis <- c(ols_coef_mis, mean(coverage_ols_mis_coverage) * 100)
+
+
+Pscore_boot_lag.two_mis <- c(Pscore_boot_lag.two_mis_coef, mean(Pscore_boot_lag.two_mis_coverage) * 100)
+Pscore_wfe_lag.two_mis <- c(Pscore_wfe_lag.two_mis_coef, mean(coverage_Pscore_wfe_lag.two_mis_coverage) * 100)
+
+Maha_wfe_lag.two_mis <- c(Maha_wfe_lag.two_mis_coef, mean(coverage_Maha_wfe_lag.two_mis_coverage) * 100)
+Maha_boot_lag.two_mis <- c(Maha_boot_lag.two_mis_coef, mean(Maha_boot_lag.two_mis_coverage) * 100)
+
+
+Synth_wfe_lag.two_mis <- c(Synth_wfe_lag.two_mis_coef, mean(coverage_Synth_wfe_lag.two_mis_coverage) * 100)
+Synth_boot_lag.two_mis <- c(Synth_boot_lag.two_mis_coef, mean(Synth_boot_lag.two_mis_coverage) * 100)
+```
+```{R cache = TRUE}
+parameters <- c("point estimate", "Coverage")
+table_lag.two_mis <- cbind(parameters, ols_mis, gmm_d_mis, 
+                              gmm_s_mis, 
+                              Synth_wfe_lag.two_mis,Synth_boot_lag.two_mis,
+                             Maha_wfe_lag.two_mis, Maha_boot_lag.two_mis,
+                             Pscore_wfe_lag.two_mis, Pscore_boot_lag.two_mis)
+```
+
+```{R table_lag.two_mis, cache = TRUE, echo = FALSE}
+table_lag.two_mis <- as.data.frame(table_lag.two_mis)
+
+knitr::kable(table_lag.two_mis)
+
+```
+
+
+
+```{r doing_lag.one_mis, echo = FALSE, results = 'hide', cache=TRUE, message = FALSE}
+## L = 4, wfe synth
+Synth_wfe_lag.one_mis_coef <- mean(sapply(horse, function (x) mean(x$Synth_wfe_lag.one_mis_coef)), na.rm = T)
+coverage_Synth_wfe_lag.one_mis_coverage <- rep(NA, length(horse))
+for (i in 1:length(horse)) {
+  if (horse[[i]]$Synth_wfe_lag.one_mis_coef - horse[[i]]$Synth_wfe_lag.one_mis_se * qnorm(.95) < 1 &
+      horse[[i]]$Synth_wfe_lag.one_mis_coef + horse[[i]]$Synth_wfe_lag.one_mis_se * qnorm(.95) > 1) {
+    coverage_Synth_wfe_lag.one_mis_coverage[i] <- 1
+  } else {
+    coverage_Synth_wfe_lag.one_mis_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_Synth_wfe_lag.one_mis_coverage)*100
+
+## L = 4, wfe boot
+Synth_boot_lag.one_mis_coef <- mean(sapply(horse, function (x) mean(x$Synth_boot_lag.one_mis_coef)), na.rm = T)
+Synth_boot_lag.one_mis_coef
+Synth_boot_lag.one_mis_coverage <- rep(NA, length(horse))
+ for (i in 1:length(horse)) {
+   if (quantile(horse[[i]]$Synth_boot_lag.one_mis_boots, c(.05, .95), na.rm = T)[1] < 1 &
+       quantile(horse[[i]]$Synth_boot_lag.one_mis_boots, c(.05, .95), na.rm = T)[2] > 1) {
+     Synth_boot_lag.one_mis_coverage[i] <- 1
+   } else {
+     Synth_boot_lag.one_mis_coverage[i] <- 0
+   }
+   
+}
+mean(Synth_boot_lag.one_mis_coverage)*100
+
+
+## L = 4, wfe Maha
+Maha_wfe_lag.one_mis_coef <- mean(sapply(horse, function (x) mean(x$Maha_wfe_lag.one_mis_coef)), na.rm = T)
+Maha_wfe_lag.one_mis_coef
+coverage_Maha_wfe_lag.one_mis_coverage <- rep(NA, length(horse))
+for (i in 1:length(horse)) {
+  if (horse[[i]]$Maha_wfe_lag.one_mis_coef - horse[[i]]$Maha_wfe_lag.one_mis_se * qnorm(.95) < 1 &
+      horse[[i]]$Maha_wfe_lag.one_mis_coef + horse[[i]]$Maha_wfe_lag.one_mis_se * qnorm(.95) > 1) {
+    coverage_Maha_wfe_lag.one_mis_coverage[i] <- 1
+  } else {
+    coverage_Maha_wfe_lag.one_mis_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_Maha_wfe_lag.one_mis_coverage)*100
+
+## L = 4, boot Maha
+Maha_boot_lag.one_mis_coef <- mean(sapply(horse, function (x) mean(x$Maha_boot_lag.one_mis_coef)), na.rm = T)
+Maha_boot_lag.one_mis_coef
+Maha_boot_lag.one_mis_coverage <- rep(NA, length(horse))
+ for (i in 1:length(horse)) {
+   if (quantile(horse[[i]]$Maha_boot_lag.one_mis_boots, c(.05, .95), na.rm = T)[1] < 1 &
+       quantile(horse[[i]]$Maha_boot_lag.one_mis_boots, c(.05, .95), na.rm = T)[2] > 1) {
+     Maha_boot_lag.one_mis_coverage[i] <- 1
+   } else {
+     Maha_boot_lag.one_mis_coverage[i] <- 0
+   }
+   
+}
+mean(Maha_boot_lag.one_mis_coverage)*100
+
+## L = 4, wfe Pscore
+Pscore_wfe_lag.one_mis_coef <- mean(sapply(horse, function (x) mean(x$Pscore_wfe_lag.one_mis_coef)), na.rm = T)
+Pscore_wfe_lag.one_mis_coef
+coverage_Pscore_wfe_lag.one_mis_coverage <- rep(NA, length(horse))
+
+for (i in 1:length(horse)) {
+  if (horse[[i]]$Pscore_wfe_lag.one_mis_coef - horse[[i]]$Pscore_wfe_lag.one_mis_se * qnorm(.95) < 1 &
+      horse[[i]]$Pscore_wfe_lag.one_mis_coef + horse[[i]]$Pscore_wfe_lag.one_mis_se * qnorm(.95) > 1) {
+    coverage_Pscore_wfe_lag.one_mis_coverage[i] <- 1
+  } else {
+    coverage_Pscore_wfe_lag.one_mis_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_Pscore_wfe_lag.one_mis_coverage, na.rm = T)*100
+
+## L = 4, boot Pscore
+Pscore_boot_lag.one_mis_coef <- mean(sapply(horse, function (x) mean(x$Pscore_boot_lag.one_mis_coef)), na.rm = T)
+Pscore_boot_lag.one_mis_coef
+Pscore_boot_lag.one_mis_coverage <- rep(NA, length(horse))
+ for (i in 1:length(horse)) {
+   if (quantile(horse[[i]]$Pscore_boot_lag.one_mis_boots, c(.05, .95), na.rm = T)[1] < 1 &
+       quantile(horse[[i]]$Pscore_boot_lag.one_mis_boots, c(.05, .95), na.rm = T)[2] > 1) {
+     Pscore_boot_lag.one_mis_coverage[i] <- 1
+   } else {
+     Pscore_boot_lag.one_mis_coverage[i] <- 0
+   }
+   
+}
+mean(Pscore_boot_lag.one_mis_coverage)*100
+
+# OLS
+ols_coef_mis <- mean(sapply(horse, function (x) mean(x$ols_coef_mis)), na.rm = T)
+ols_coef_mis
+coverage_ols_mis_coverage <- rep(NA, length(horse))
+for (i in 1:length(horse)) {
+  if (horse[[i]]$ols_coef_mis - horse[[i]]$ols_se_mis * qnorm(.95) < 1 &
+      horse[[i]]$ols_coef_mis + horse[[i]]$ols_se_mis * qnorm(.95) > 1) {
+    coverage_ols_mis_coverage[i] <- 1
+  } else {
+    coverage_ols_mis_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_ols_mis_coverage)*100
+
+# Diff_GMM
+gmm_d_mis_coef <- mean(sapply(horse, function (x) mean(x$gmm_d_mis_coef)))
+gmm_d_mis_coef
+coverage_gmm_d_mis_coverage <- rep(NA, length(horse))
+for (i in 1:length(horse)) {
+  if (horse[[i]]$gmm_d_mis_coef - horse[[i]]$gmm_d_mis_se * qnorm(.95) < 1 &
+      horse[[i]]$gmm_d_mis_coef + horse[[i]]$gmm_d_mis_se * qnorm(.95) > 1) {
+    coverage_gmm_d_mis_coverage[i] <- 1
+  } else {
+    coverage_gmm_d_mis_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_gmm_d_mis_coverage)*100
+
+# System_GMM
+gmm_s_mis_coef <- mean(sapply(horse, function (x) mean(x$gmm_s_mis_coef)), na.rm = T)
+gmm_s_mis_coef
+coverage_gmm_s_mis_coverage <- rep(NA, length(horse))
+for (i in 1:length(horse)) {
+  if (horse[[i]]$gmm_s_mis_coef - horse[[i]]$gmm_s_mis_se * qnorm(.95) < 1 &
+      horse[[i]]$gmm_s_mis_coef + horse[[i]]$gmm_s_mis_se * qnorm(.95) > 1) {
+    coverage_gmm_s_mis_coverage[i] <- 1
+  } else {
+    coverage_gmm_s_mis_coverage[i] <- 0
+  }
+  
+}
+mean(coverage_gmm_s_mis_coverage)*100
+
+# 
+gmm_s_mis <- c(gmm_s_mis_coef, mean(coverage_gmm_s_mis_coverage) * 100)
+gmm_d_mis <- c(gmm_d_mis_coef, mean(coverage_gmm_d_mis_coverage) * 100)
+
+ols_mis <- c(ols_coef_mis, mean(coverage_ols_mis_coverage) * 100)
+
+
+Pscore_boot_lag.one_mis <- c(Pscore_boot_lag.one_mis_coef, mean(Pscore_boot_lag.one_mis_coverage) * 100)
+Pscore_wfe_lag.one_mis <- c(Pscore_wfe_lag.one_mis_coef, mean(coverage_Pscore_wfe_lag.one_mis_coverage) * 100)
+
+Maha_wfe_lag.one_mis <- c(Maha_wfe_lag.one_mis_coef, mean(coverage_Maha_wfe_lag.one_mis_coverage) * 100)
+Maha_boot_lag.one_mis <- c(Maha_boot_lag.one_mis_coef, mean(Maha_boot_lag.one_mis_coverage) * 100)
+
+
+Synth_wfe_lag.one_mis <- c(Synth_wfe_lag.one_mis_coef, mean(coverage_Synth_wfe_lag.one_mis_coverage) * 100)
+Synth_boot_lag.one_mis <- c(Synth_boot_lag.one_mis_coef, mean(Synth_boot_lag.one_mis_coverage) * 100)
+```
+```{R cache = TRUE}
+parameters <- c("point estimate", "Coverage")
+table_lag.one_mis <- cbind(parameters, ols_mis, gmm_d_mis, 
+                              gmm_s_mis, 
+                              Synth_wfe_lag.one_mis,Synth_boot_lag.one_mis,
+                             Maha_wfe_lag.one_mis, Maha_boot_lag.one_mis,
+                             Pscore_wfe_lag.one_mis, Pscore_boot_lag.one_mis)
+```
+
+```{R table_lag.one_mis, cache = TRUE, echo = FALSE}
+table_lag.one_mis <- as.data.frame(table_lag.one_mis)
+
+knitr::kable(table_lag.one_mis)
+
+```
