@@ -13,7 +13,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
                       lead = 0,
                       rho_1 = .8, rho_t_1 = .8, rho_tt_1 = .2, 
                       rho_x = .4, rho_x2 = 0, lagTreOutc = .2, 
-                      beta = 1, beta_x = .2, beta_x2 = 0, 
+                      beta = 0, beta_x = .2, beta_x2 = 0, 
                       phi = .75, rho_t_2 = .3, ephi = .5,
                       rho_2 = .3, M = 1, hetereo = T,
                       ITER = 500) {
@@ -23,7 +23,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   y.lagged <- matrix(NA, ncol = N, nrow = Time)
   treat.lagged <- matrix(NA, ncol = N, nrow = Time)
   
-
+  
   x <- matrix(rep(NA, N*Time), ncol = N)
   for (i in 1:N) {
     x[1, i] <- rnorm(1, 0.5, 1) + gammat[1] + alphai[i]
@@ -140,10 +140,10 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
                                 error = function(err) NA)
   
   tryCatch(if(t(colQuantiles(Synth_wfe_lag.one$boots,
-                    probs = c((1-Synth_wfe_lag.one$CI)/2, Synth_wfe_lag.one$CI+(1-Synth_wfe_lag.one$CI)/2), 
-                    na.rm = T, drop = FALSE))[1] < 1 & t(colQuantiles(Synth_wfe_lag.one$boots,
-                                                                      probs = c((1-Synth_wfe_lag.one$CI)/2, Synth_wfe_lag.one$CI+(1-Synth_wfe_lag.one$CI)/2), 
-                                                                      na.rm = T, drop = FALSE))[2] > 1) {
+                             probs = c((1-Synth_wfe_lag.one$CI)/2, Synth_wfe_lag.one$CI+(1-Synth_wfe_lag.one$CI)/2), 
+                             na.rm = T, drop = FALSE))[1] < 1 & t(colQuantiles(Synth_wfe_lag.one$boots,
+                                                                               probs = c((1-Synth_wfe_lag.one$CI)/2, Synth_wfe_lag.one$CI+(1-Synth_wfe_lag.one$CI)/2), 
+                                                                               na.rm = T, drop = FALSE))[2] > 1) {
     coverage_Synth_wfe_lag.one <- 1
   } else {
     coverage_Synth_wfe_lag.one <- 0
@@ -159,10 +159,10 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
                                                   matched_sets = Matches_Maha_lag.one),
                                error = function(err) NA)
   tryCatch(if(t(colQuantiles(Maha_wfe_lag.one$boots,
-                    probs = c((1-Maha_wfe_lag.one$CI)/2, Maha_wfe_lag.one$CI+(1-Maha_wfe_lag.one$CI)/2), 
-                    na.rm = T, drop = FALSE))[1] < 1 & t(colQuantiles(Maha_wfe_lag.one$boots,
-                                                                      probs = c((1-Maha_wfe_lag.one$CI)/2, Maha_wfe_lag.one$CI+(1-Maha_wfe_lag.one$CI)/2), 
-                                                                      na.rm = T, drop = FALSE))[2] > 1) {
+                             probs = c((1-Maha_wfe_lag.one$CI)/2, Maha_wfe_lag.one$CI+(1-Maha_wfe_lag.one$CI)/2), 
+                             na.rm = T, drop = FALSE))[1] < 1 & t(colQuantiles(Maha_wfe_lag.one$boots,
+                                                                               probs = c((1-Maha_wfe_lag.one$CI)/2, Maha_wfe_lag.one$CI+(1-Maha_wfe_lag.one$CI)/2), 
+                                                                               na.rm = T, drop = FALSE))[2] > 1) {
     coverage_Maha_wfe_lag.one <- 1
   } else {
     coverage_Maha_wfe_lag.one <- 0
@@ -180,11 +180,11 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
                                  error = function(err) NA)
   
   
- tryCatch(if(t(colQuantiles(Pscore_wfe_lag.one$boots,
-                    probs = c((1-Pscore_wfe_lag.one$CI)/2, Pscore_wfe_lag.one$CI+(1-Pscore_wfe_lag.one$CI)/2), 
-                    na.rm = T, drop = FALSE))[1] < 1 & t(colQuantiles(Pscore_wfe_lag.one$boots,
-                                                                      probs = c((1-Pscore_wfe_lag.one$CI)/2, Pscore_wfe_lag.one$CI+(1-Pscore_wfe_lag.one$CI)/2), 
-                                                                      na.rm = T, drop = FALSE))[2] > 1) {
+  tryCatch(if(t(colQuantiles(Pscore_wfe_lag.one$boots,
+                             probs = c((1-Pscore_wfe_lag.one$CI)/2, Pscore_wfe_lag.one$CI+(1-Pscore_wfe_lag.one$CI)/2), 
+                             na.rm = T, drop = FALSE))[1] < 1 & t(colQuantiles(Pscore_wfe_lag.one$boots,
+                                                                               probs = c((1-Pscore_wfe_lag.one$CI)/2, Pscore_wfe_lag.one$CI+(1-Pscore_wfe_lag.one$CI)/2), 
+                                                                               na.rm = T, drop = FALSE))[2] > 1) {
     coverage_Pscore_wfe_lag.one <- 1
   } else {
     coverage_Pscore_wfe_lag.one <- 0
@@ -268,18 +268,26 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   cat("ols \n")
   cat("\n ----------------------- \n")
   if(rho_tt_1 == 0 & lagTreOutc == 0) {
-    ols <- tryCatch(plm(y~treat + y_l1 + x,
+    ols1 <- tryCatch(lm(y ~ treat + y_l1 + x, data = Data.obs), error = function(err) NA)
+  } else {
+    ols1 <- tryCatch(lm(y ~ treat + y_l1 + x + treat_l1, data = Data.obs), error = function(err) NA)
+  }
+  
+  
+  if(rho_tt_1 == 0 & lagTreOutc == 0) {
+    ols2 <- tryCatch(plm(y~treat + y_l1 + x,
                         index = c("unit","time"), model = "within",
                         effect = "twoways",
                         data = Data.obs), error = function(err) NA)
   } else {
-    ols <- tryCatch(plm(y~treat + y_l1 + treat_l1 + x,
+    ols2 <- tryCatch(plm(y~treat + y_l1 + treat_l1 + x,
                         index = c("unit","time"), model = "within",
                         effect = "twoways",
                         data = Data.obs), error = function(err) NA)
   }
-
-
+  
+  
+  
   cat("\n ----------------------- \n")
   cat("summarizing stuff \n")
   cat("\n ----------------------- \n")
@@ -302,12 +310,21 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   # Pscore_wfe_lag.two_se  <- tryCatch(Pscore_wfe_lag.two$se, error = function(err) NA)
   # Pscore_wfe_lag.two_coef  <- tryCatch(Pscore_wfe_lag.two$coefficients[1], error = function(err) NA)
   # 
-  ols_coef  <- tryCatch(ols$coefficients[1], error = function(err) NA)
-  ols_se  <- tryCatch(sqrt(ols$vcov["treat", "treat"]), error = function(err) NA)
-  tryCatch(if(ols_coef - ols_se * qnorm(.95) < 1 & ols_coef + ols_se * qnorm(.95) > 1) {
-    coverage_ols <- 1
+  ols1_coef  <- tryCatch(ols1$coefficients["treat"], error = function(err) NA)
+  ols1_se  <- tryCatch(summary(ols1)[[4]][2, 2], error = function(err) NA)
+  tryCatch(if(ols1_coef - ols1_se * qnorm(.95) < 1 & ols1_coef + ols1_se * qnorm(.95) > 1) {
+    coverage_ols1 <- 1
   } else {
-    coverage_ols <- 0
+    coverage_ols1 <- 0
+  }, error = function(err) NA)
+  
+  
+  ols2_coef  <- tryCatch(ols2$coefficients[1], error = function(err) NA)
+  ols2_se  <- tryCatch(sqrt(ols2$vcov["treat", "treat"]), error = function(err) NA)
+  tryCatch(if(ols2_coef - ols2_se * qnorm(.95) < 1 & ols2_coef + ols2_se * qnorm(.95) > 1) {
+    coverage_ols2 <- 1
+  } else {
+    coverage_ols2 <- 0
   }, error = function(err) NA)
   
   return(list("Synth_wfe_lag.one_se" = Synth_wfe_lag.one_se,
@@ -331,8 +348,10 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
               # "Pscore_wfe_lag.two_se" = Pscore_wfe_lag.two_se,
               # "Pscore_wfe_lag.two_coef" = Pscore_wfe_lag.two_coef,
               
-              "ols_coef" = ols_coef,
-              "ols_se" = ols_se
+              "ols1_coef" = ols1_coef,
+              "ols1_se" = ols1_se,
+              "ols2_coef" = ols2_coef,
+              "ols2_se" = ols2_se
               # "ols_coef_mis" = ols_coef_mis,
               # "ols_se_mis" = ols_se_mis,
               # "gmm_d_coef" = gmm_d_coef,
@@ -349,7 +368,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
 
 
 # rho_t_1 = .8; rho_1 = .8
-reps <- 2000
+reps <- 3000
 
 ### hetereo ###
 cat("Now we are doing New_N50_ephi0.5_T10_hetereo \n")
@@ -358,55 +377,8 @@ N <- 50; Time <- 10
 alphai <- rnorm(N, mean = 6)
 gammat <- rnorm(Time, mean = 6)
 
-New_N50_ephi0.5_T10_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+small <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
   out <- sim_wfe2(N = N, Time = Time, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
-save(New_N50_ephi0.5_T10_hetereo, file = "New_N50_ephi0.5_T10_hetereo")
-
-N <- 100; Time <- 10
-alphai <- rnorm(N, mean = 6)
-gammat <- rnorm(Time, mean = 6)
-
-cat("Now we are doing New_N100_ephi0.5_T10_hetereo \n")
-New_N100_ephi0.5_T10_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
-  out <- sim_wfe2(N = N, Time = Time, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
-  list(out)
-})
-save(New_N100_ephi0.5_T10_hetereo, file = "New_N100_ephi0.5_T10_hetereo")
-
-N <- 200; Time <- 10
-alphai <- rnorm(N, mean = 6)
-gammat <- rnorm(Time, mean = 6)
-
-cat("Now we are doing New_N200_ephi0.5_T10_hetereo \n")
-New_N200_ephi0.5_T10_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
-  out <- sim_wfe2(N = N, Time = Time, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
-  list(out)
-})
-save(New_N200_ephi0.5_T10_hetereo, file = "New_N200_ephi0.5_T10_hetereo")
-
-N <- 500; Time <- 10
-alphai <- rnorm(N, mean = 6)
-gammat <- rnorm(Time, mean = 6)
-
-cat("Now we are doing New_N500_ephi0.5_T10_hetereo \n")
-New_N500_ephi0.5_T10_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
-  out <- sim_wfe2(N = N, Time = Time, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
-  list(out)
-})
-save(New_N500_ephi0.5_T10_hetereo, file = "New_N500_ephi0.5_T10_hetereo")
-
-
-
-N <- 1000; Time <- 10
-alphai <- rnorm(N, mean = 6)
-gammat <- rnorm(Time, mean = 6)
-
-cat("Now we are doing New_N500_ephi0.5_T10_hetereo \n")
-New_N1000_ephi0.5_T10_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
-  out <- sim_wfe2(N = N, Time = Time, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
-  list(out)
-})
-save(New_N1000_ephi0.5_T10_hetereo, file = "New_N1000_ephi0.5_T10_hetereo")
-
+save(small, file = "small")
