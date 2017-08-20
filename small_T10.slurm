@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=19
 #SBATCH -t 20:00:00
 #SBATCH -J horse_race_simulations
-#SBATCH -o log-horse_race_simulations.%j 
+#SBATCH -o log-small_T10.%j 
 #SBATCH --mail-type=begin
 #SBATCH --mail-type=end
 #SBATCH --mem 64000
