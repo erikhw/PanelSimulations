@@ -16,7 +16,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
                       beta = 1, beta_x = .2, beta_x2 = 0, 
                       phi = .3, rho_t_2 = .3, ephi = .5,
                       rho_2 = .3, M = 1, hetereo = T,
-                      x_fe = .3,
+                      x_fe = .3, frac = 1.3,
                       ITER = 500) {
   y <- matrix(NA, ncol = N, nrow = Time)
   eps <- matrix(NA, ncol = N, nrow = Time)
@@ -50,7 +50,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
     # treat.error <- -4 #rnorm(1,-4)
     prob <- exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1])/
       (1+exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1]))
-    treat[1,i] <- rbinom(1,1, prob/2)
+    treat[1,i] <- rbinom(1,1, prob/frac)
     eps[1, i] <- rnorm(1, 0, 6)
     y[1,i] <- rho_1*y.lagged[1,i] + alphai[i] + gammat[1] + 
       beta*treat[1,i] + lagTreOutc*treat.lagged[1,i] + beta_x*x[1,i] + beta_x2*x2[1,i] +
@@ -60,7 +60,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
       # treat.error <- -4 #rnorm(1,-4)
       prob <- exp(rho_t_1*y[t-1,i] + alphai[i] + rho_tt_1*treat[t-1,i] + rho_x*x[t,i] + rho_x2*x2[t,i] +gammat[t])/
         (1+exp(rho_t_1*y[t-1,i] + alphai[i] + rho_tt_1*treat[t-1,i] + rho_x*x[t,i] + rho_x2*x2[t,i] + gammat[t]))
-      treat[t,i] <- rbinom(1,1, prob/2)
+      treat[t,i] <- rbinom(1,1, prob/frac)
       treat.lagged[t,i] <- treat[t-1,i]
       
       if(hetereo == T) {
@@ -352,7 +352,8 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
               "ols1_coef" = ols1_coef,
               "ols1_se" = ols1_se,
               "ols2_coef" = ols2_coef,
-              "ols2_se" = ols2_se
+              "ols2_se" = ols2_se,
+              "prop" = mean(tapply(Data.obs$treat, Data.obs$unit, mean))
               # "ols_coef_mis" = ols_coef_mis,
               # "ols_se_mis" = ols_se_mis,
               # "gmm_d_coef" = gmm_d_coef,
@@ -374,108 +375,316 @@ reps <- 3000
 ### hetereo ###
 cat("Now we are doing New_N50_ephi0.5_T10_hetereo \n")
 
-N <- 50; Time <- 10
-alphai <- rnorm(N, mean = 6, sd = 6)
-gammat <- rnorm(Time, mean = 6, sd = 6)
+
+alphai <- rnorm(n =5000, mean = 10, sd = 6)
+gammat <- rnorm(n = 20, mean = 10, sd = 6)
 
 small_N50 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
-  out <- sim_wfe2(N = N, Time = Time, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  out <- sim_wfe2(frac = 1.5, N = 50, Time = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
 save(small_N50, file = "small_N50")
 
-N <- 100; Time <- 10
-alphai <- rnorm(N, mean = 6, sd = 6)
-gammat <- rnorm(Time, mean = 6, sd = 6)
+# N <- 100; Time <- 10
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
 
 small_N100 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
-  out <- sim_wfe2(N = N, Time = Time, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  out <- sim_wfe2(frac = 1.5, N = 100, Time = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
 save(small_N100, file = "small_N100")
 
-N <- 200; Time <- 10
-alphai <- rnorm(N, mean = 6, sd = 6)
-gammat <- rnorm(Time, mean = 6, sd = 6)
+# N <- 200; Time <- 10
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
 
 small_N200 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
-  out <- sim_wfe2(N = N, Time = Time, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  out <- sim_wfe2(frac = 1.5, N = 200, Time = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
 save(small_N200, file = "small_N200")
 
 
-N <- 500; Time <- 10
-alphai <- rnorm(N, mean = 6, sd = 6)
-gammat <- rnorm(Time, mean = 6, sd = 6)
+# N <- 500; Time <- 10
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
 
 small_N500 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
-  out <- sim_wfe2(N = N, Time = Time, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  out <- sim_wfe2(frac = 1.5, N = 500, Time = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
 save(small_N500, file = "small_N500")
 
-N <- 1000; Time <- 10
-alphai <- rnorm(N, mean = 6, sd = 6)
-gammat <- rnorm(Time, mean = 6, sd = 6)
+# N <- 1000; Time <- 10
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
 
 small_N1000 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
-  out <- sim_wfe2(N = N, Time = Time, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  out <- sim_wfe2(frac = 1.5, N = 1000, Time = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
 save(small_N1000, file = "small_N1000")
 
 ### T = 20
-N <- 50; Time <- 20
-alphai <- rnorm(N, mean = 6, sd = 6)
-gammat <- rnorm(Time, mean = 6, sd = 6)
+# N <- 50; Time <- 20
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
 
 small_T20_N50 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
-  out <- sim_wfe2(N = N, Time = Time, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  out <- sim_wfe2(frac = 1.5, N = 50, Time = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
 save(small_T20_N50, file = "small_T20_N50")
 
 
-N <- 100; Time <- 20
-alphai <- rnorm(N, mean = 6, sd = 6)
-gammat <- rnorm(Time, mean = 6, sd = 6)
+# N <- 100; Time <- 20
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
 
 small_T20_N100 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
-  out <- sim_wfe2(N = N, Time = Time, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  out <- sim_wfe2(frac = 1.5, N = 100, Time = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
 save(small_T20_N100, file = "small_T20_N100")
 
-N <- 200; Time <- 20
-alphai <- rnorm(N, mean = 6, sd = 6)
-gammat <- rnorm(Time, mean = 6, sd = 6)
+# N <- 200; Time <- 20
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
 
 small_T20_N200 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
-  out <- sim_wfe2(N = N, Time = Time, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  out <- sim_wfe2(frac = 1.5, N = 200, Time = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
 save(small_T20_N200, file = "small_T20_N200")
 
 
-N <- 500; Time <- 20
-alphai <- rnorm(N, mean = 6, sd = 6)
-gammat <- rnorm(Time, mean = 6, sd = 6)
+# N <- 500; Time <- 20
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
 
 small_T20_N500 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
-  out <- sim_wfe2(N = N, Time = Time, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  out <- sim_wfe2(frac = 1.5, N = 500, Time = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
 save(small_T20_N500, file = "small_T20_N500")
 
-N <- 1000; Time <- 20
-alphai <- rnorm(N, mean = 6, sd = 6)
-gammat <- rnorm(Time, mean = 6, sd = 6)
+# N <- 1000; Time <- 20
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
 
 small_T20_N1000 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
-  out <- sim_wfe2(N = N, Time = Time, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  out <- sim_wfe2(frac = 1.5, N = 1000, Time = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
 save(small_T20_N1000, file = "small_T20_N1000")
+
+
+### frac = 1.2
+small_frac1.2N50 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(frac = 1.2, N = 50, Time = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  list(out)
+})
+save(small_frac1.2N50, file = "small_frac1.2N50")
+
+# N <- 100; Time <- 10
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
+
+small_frac1.2N100 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(frac = 1.2, N = 100, Time = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  list(out)
+})
+save(small_frac1.2N100, file = "small_frac1.2N100")
+
+# N <- 200; Time <- 10
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
+
+small_frac1.2N200 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(frac = 1.2, N = 200, Time = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  list(out)
+})
+save(small_frac1.2N200, file = "small_frac1.2N200")
+
+
+# N <- 500; Time <- 10
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
+
+small_frac1.2N500 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(frac = 1.2, N = 500, Time = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  list(out)
+})
+save(small_frac1.2N500, file = "small_frac1.2N500")
+
+# N <- 1000; Time <- 10
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
+
+small_frac1.2N1000 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(frac = 1.2, N = 1000, Time = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  list(out)
+})
+save(small_frac1.2N1000, file = "small_frac1.2N1000")
+
+### T = 20
+# N <- 50; Time <- 20
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
+
+small_frac1.2T20_N50 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(frac = 1.2, N = 50, Time = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  list(out)
+})
+save(small_frac1.2T20_N50, file = "small_frac1.2T20_N50")
+
+
+# N <- 100; Time <- 20
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
+
+small_frac1.2T20_N100 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(frac = 1.2, N = 100, Time = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  list(out)
+})
+save(small_frac1.2T20_N100, file = "small_frac1.2T20_N100")
+
+# N <- 200; Time <- 20
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
+
+small_frac1.2T20_N200 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(frac = 1.2, N = 200, Time = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  list(out)
+})
+save(small_frac1.2T20_N200, file = "small_frac1.2T20_N200")
+
+
+# N <- 500; Time <- 20
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
+
+small_frac1.2T20_N500 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(frac = 1.2, N = 500, Time = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  list(out)
+})
+save(small_frac1.2T20_N500, file = "small_frac1.2T20_N500")
+
+# N <- 1000; Time <- 20
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
+
+small_frac1.2T20_N1000 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(frac = 1.2, N = 1000, Time = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  list(out)
+})
+save(small_frac1.2T20_N1000, file = "small_frac1.2T20_N1000")
+
+
+
+### frac = 1.8
+small_frac1.8N50 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(frac = 1.8, N = 50, Time = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  list(out)
+})
+save(small_frac1.8N50, file = "small_frac1.8N50")
+
+# N <- 100; Time <- 10
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
+
+small_frac1.8N100 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(frac = 1.8, N = 100, Time = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  list(out)
+})
+save(small_frac1.8N100, file = "small_frac1.8N100")
+
+# N <- 200; Time <- 10
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
+
+small_frac1.8N200 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(frac = 1.8, N = 200, Time = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  list(out)
+})
+save(small_frac1.8N200, file = "small_frac1.8N200")
+
+
+# N <- 500; Time <- 10
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
+
+small_frac1.8N500 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(frac = 1.8, N = 500, Time = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  list(out)
+})
+save(small_frac1.8N500, file = "small_frac1.8N500")
+
+# N <- 1000; Time <- 10
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
+
+small_frac1.8N1000 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(frac = 1.8, N = 1000, Time = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  list(out)
+})
+save(small_frac1.8N1000, file = "small_frac1.8N1000")
+
+### T = 20
+# N <- 50; Time <- 20
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
+
+small_frac1.8T20_N50 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(frac = 1.8, N = 50, Time = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  list(out)
+})
+save(small_frac1.8T20_N50, file = "small_frac1.8T20_N50")
+
+
+# N <- 100; Time <- 20
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
+
+small_frac1.8T20_N100 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(frac = 1.8, N = 100, Time = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  list(out)
+})
+save(small_frac1.8T20_N100, file = "small_frac1.8T20_N100")
+
+# N <- 200; Time <- 20
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
+
+small_frac1.8T20_N200 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(frac = 1.8, N = 200, Time = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  list(out)
+})
+save(small_frac1.8T20_N200, file = "small_frac1.8T20_N200")
+
+
+# N <- 500; Time <- 20
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
+
+small_frac1.8T20_N500 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(frac = 1.8, N = 500, Time = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  list(out)
+})
+save(small_frac1.8T20_N500, file = "small_frac1.8T20_N500")
+
+# N <- 1000; Time <- 20
+# alphai <- rnorm(N, mean = 6, sd = 6)
+# gammat <- rnorm(Time, mean = 6, sd = 6)
+
+small_frac1.8T20_N1000 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(frac = 1.8, N = 1000, Time = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  list(out)
+})
+save(small_frac1.8T20_N1000, file = "small_frac1.8T20_N1000")
+
+
+
 
 

@@ -344,11 +344,47 @@ length(sapply(New_N300_ephi0.5_T10_hetereo, function(x) x$Pscore_wfe_lag.one_cov
 
 
 setwd("~/Dropbox/w2fe/Simulations/results")
-load("small")
-small[[1]]
-mean(sapply(small, function(x) x$ols1_coef))
-mean(sapply(small, function(x) x$ols2_coef))
-mean(sapply(small, function(x) x$Synth_wfe_lag.one_coef))
-mean(sapply(small, function(x) x$Maha_wfe_lag.one_coef))
-mean(sapply(small, function(x) x$Pscore_wfe_lag.one_coef))
-length(small)
+load("small_N50")
+load("small_N100")
+load("small_N200")
+load("small_N500")
+load("small_N1000")
+
+load("small_T20_N50")
+load("small_T20_N100")
+load("small_T20_N200")
+load("small_T20_N500")
+load("small_T20_N1000")
+
+mean(sapply(small_N50, function(x) x$ols1_coef))
+mean(sapply(small_N50, function(x) x$ols2_coef))
+
+mean(sapply(small_N100, function(x) x$ols1_coef))
+mean(sapply(small_N100, function(x) x$ols2_coef))
+
+mean(sapply(small_N200, function(x) x$ols1_coef))
+mean(sapply(small_N200, function(x) x$ols2_coef))
+
+mean(sapply(small_N500, function(x) x$ols1_coef))
+mean(sapply(small_N500, function(x) x$ols2_coef))
+
+mean(sapply(small_N1000, function(x) x$ols1_coef))
+mean(sapply(small_N1000, function(x) x$ols2_coef))
+
+
+
+mean(sapply(small_T20_N50, function(x) x$ols1_coef))
+mean(sapply(small_T20_N50, function(x) x$ols2_coef))
+
+mean(sapply(small_T20_N100, function(x) x$ols1_coef))
+mean(sapply(small_T20_N100, function(x) x$ols2_coef))
+
+mean(sapply(small_T20_N200, function(x) x$ols1_coef))
+mean(sapply(small_T20_N200, function(x) x$ols2_coef))
+
+mean(sapply(small_T20_N500, function(x) x$ols1_coef))
+mean(sapply(small_T20_N500, function(x) x$ols2_coef))
+
+mean(sapply(small_T20_N1000, function(x) x$ols1_coef))
+mean(sapply(small_T20_N1000, function(x) x$ols2_coef))
+
