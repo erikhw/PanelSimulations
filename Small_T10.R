@@ -268,25 +268,49 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   cat("\n ----------------------- \n")
   cat("ols \n")
   cat("\n ----------------------- \n")
+
   if(rho_tt_1 == 0 & lagTreOutc == 0) {
-    ols1 <- tryCatch(lm(y ~ treat + y_l1 + x, data = Data.obs), error = function(err) NA)
+    ols1 <- tryCatch(lm(y ~ treat, data = Data.obs), error = function(err) NA)
   } else {
-    ols1 <- tryCatch(lm(y ~ treat + y_l1 + x + treat_l1, data = Data.obs), error = function(err) NA)
+    ols1 <- tryCatch(lm(y ~ treat + treat_l1, data = Data.obs), error = function(err) NA)
   }
   
   
   if(rho_tt_1 == 0 & lagTreOutc == 0) {
-    ols2 <- tryCatch(plm(y~treat + y_l1 + x,
+    ols2 <- tryCatch(lm(y ~ treat + x, data = Data.obs), error = function(err) NA)
+  } else {
+    ols2 <- tryCatch(lm(y ~ treat + x + treat_l1, data = Data.obs), error = function(err) NA)
+  }
+  
+  if(rho_tt_1 == 0 & lagTreOutc == 0) {
+    ols3 <- tryCatch(lm(y ~ treat + y_l1 + x, data = Data.obs), error = function(err) NA)
+  } else {
+    ols3 <- tryCatch(lm(y ~ treat + y_l1 + x + treat_l1, data = Data.obs), error = function(err) NA)
+  }
+  
+  if(rho_tt_1 == 0 & lagTreOutc == 0) {
+    ols4 <- tryCatch(plm(y~treat + x,
                         index = c("unit","time"), model = "within",
                         effect = "twoways",
                         data = Data.obs), error = function(err) NA)
   } else {
-    ols2 <- tryCatch(plm(y~treat + y_l1 + treat_l1 + x,
+    ols4 <- tryCatch(plm(y~treat + treat_l1 + x,
                         index = c("unit","time"), model = "within",
                         effect = "twoways",
                         data = Data.obs), error = function(err) NA)
   }
   
+  if(rho_tt_1 == 0 & lagTreOutc == 0) {
+    ols5 <- tryCatch(plm(y~treat + y_l1 + x,
+                         index = c("unit","time"), model = "within",
+                         effect = "twoways",
+                         data = Data.obs), error = function(err) NA)
+  } else {
+    ols5 <- tryCatch(plm(y~treat + y_l1 + treat_l1 + x,
+                         index = c("unit","time"), model = "within",
+                         effect = "twoways",
+                         data = Data.obs), error = function(err) NA)
+  }
   
   
   cat("\n ----------------------- \n")
@@ -313,20 +337,48 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   # 
   ols1_coef  <- tryCatch(ols1$coefficients["treat"], error = function(err) NA)
   ols1_se  <- tryCatch(summary(ols1)[[4]][2, 2], error = function(err) NA)
+  
   tryCatch(if(ols1_coef - ols1_se * qnorm(.95) < 1 & ols1_coef + ols1_se * qnorm(.95) > 1) {
     coverage_ols1 <- 1
   } else {
     coverage_ols1 <- 0
   }, error = function(err) NA)
   
+  ols2_coef  <- tryCatch(ols2$coefficients["treat"], error = function(err) NA)
+  ols2_se  <- tryCatch(summary(ols2)[[4]][2, 2], error = function(err) NA)
   
-  ols2_coef  <- tryCatch(ols2$coefficients[1], error = function(err) NA)
-  ols2_se  <- tryCatch(sqrt(ols2$vcov["treat", "treat"]), error = function(err) NA)
   tryCatch(if(ols2_coef - ols2_se * qnorm(.95) < 1 & ols2_coef + ols2_se * qnorm(.95) > 1) {
     coverage_ols2 <- 1
   } else {
     coverage_ols2 <- 0
   }, error = function(err) NA)
+  
+  ols3_coef  <- tryCatch(ols3$coefficients["treat"], error = function(err) NA)
+  ols3_se  <- tryCatch(summary(ols3)[[4]][2, 2], error = function(err) NA)
+  ols3_rho  <- tryCatch(ols3$coefficients["y_l1"], error = function(err) NA)
+  tryCatch(if(ols3_coef - ols3_se * qnorm(.95) < 1 & ols3_coef + ols3_se * qnorm(.95) > 1) {
+    coverage_ols3 <- 1
+  } else {
+    coverage_ols3 <- 0
+  }, error = function(err) NA)
+
+  ols4_coef  <- tryCatch(ols4$coefficients[1], error = function(err) NA)
+  ols4_se  <- tryCatch(sqrt(ols4$vcov["treat", "treat"]), error = function(err) NA)
+  tryCatch(if(ols4_coef - ols4_se * qnorm(.95) < 1 & ols4_coef + ols4_se * qnorm(.95) > 1) {
+    coverage_ols4 <- 1
+  } else {
+    coverage_ols4 <- 0
+  }, error = function(err) NA)
+  
+  ols5_coef  <- tryCatch(ols5$coefficients[1], error = function(err) NA)
+  ols5_se  <- tryCatch(sqrt(ols5$vcov["treat", "treat"]), error = function(err) NA)
+  ols5_rho  <- tryCatch(ols5$coefficients[2], error = function(err) NA)
+  tryCatch(if(ols5_coef - ols5_se * qnorm(.95) < 1 & ols5_coef + ols5_se * qnorm(.95) > 1) {
+    coverage_ols5 <- 1
+  } else {
+    coverage_ols5 <- 0
+  }, error = function(err) NA)
+  
   
   return(list(# "Synth_wfe_lag.one_se" = Synth_wfe_lag.one_se,
               # "Synth_wfe_lag.one_coef" = Synth_wfe_lag.one_coef,
@@ -353,6 +405,18 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
               "ols1_se" = ols1_se,
               "ols2_coef" = ols2_coef,
               "ols2_se" = ols2_se,
+              
+              "ols3_coef" = ols3_coef,
+              "ols3_se" = ols3_se,
+              "ols3_rho" = ols3_rho,
+              
+              "ols4_coef" = ols4_coef,
+              "ols4_se" = ols4_se,
+              
+              "ols5_coef" = ols5_coef,
+              "ols5_se" = ols5_se,
+              "ols5_rho" = ols5_rho,
+              
               "prop" = mean(tapply(Data.obs$treat, Data.obs$unit, mean))
               # "ols_coef_mis" = ols_coef_mis,
               # "ols_se_mis" = ols_se_mis,
@@ -380,7 +444,7 @@ alphai <- rnorm(n =5000, mean = 10, sd = 6)
 gammat <- rnorm(n = 20, mean = 10, sd = 6)
 
 small_N50 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
-  out <- sim_wfe2(frac = 1.5, N = 50, Time = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+  out <- sim_wfe2(frac = 1.5, N = 5000, Time = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
 save(small_N50, file = "small_N50")

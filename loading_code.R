@@ -356,6 +356,28 @@ load("small_T20_N200")
 load("small_T20_N500")
 load("small_T20_N1000")
 
+
+
+load("small_frac1.2N50")
+load("small_frac1.2N100")
+load("small_frac1.2N200")
+load("small_frac1.2N500")
+
+mean(sapply(small_frac1.2N50, function(x) x$ols1_coef))
+mean(sapply(small_frac1.2N50, function(x) x$ols2_coef))
+
+mean(sapply(small_frac1.2N100, function(x) x$ols1_coef))
+mean(sapply(small_frac1.2N100, function(x) x$ols2_coef))
+
+mean(sapply(small_frac1.2N200, function(x) x$ols1_coef))
+mean(sapply(small_frac1.2N200, function(x) x$ols2_coef))
+
+mean(sapply(small_frac1.2N500, function(x) x$ols1_coef))
+mean(sapply(small_frac1.2N500, function(x) x$ols2_coef))
+
+
+
+
 mean(sapply(small_N50, function(x) x$ols1_coef))
 mean(sapply(small_N50, function(x) x$ols2_coef))
 
