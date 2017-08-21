@@ -342,3 +342,13 @@ length(sapply(New_N300_ephi0.5_T10_hetereo, function(x) x$Pscore_wfe_lag.one_cov
 
 
 
+
+setwd("~/Dropbox/w2fe/Simulations/results")
+load("small")
+small[[1]]
+mean(sapply(small, function(x) x$ols1_coef))
+mean(sapply(small, function(x) x$ols2_coef))
+mean(sapply(small, function(x) x$Synth_wfe_lag.one_coef))
+mean(sapply(small, function(x) x$Maha_wfe_lag.one_coef))
+mean(sapply(small, function(x) x$Pscore_wfe_lag.one_coef))
+length(small)
