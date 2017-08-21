@@ -11,4 +11,4 @@
 #SBATCH --mail-type=end
 #SBATCH --mem 64000
 
-srun Rscript ./small_T10.R 
+srun Rscript ./Small_T10.R 
