@@ -470,7 +470,7 @@ mean(sapply(small_frac1.8N200, function(x) x$ols1_coef))
 mean(sapply(small_frac1.8N200, function(x) x$ols2_coef))
 mean(sapply(small_frac1.8N200, function(x) x$ols3_coef)) # no bias
 mean(sapply(small_frac1.8N200, function(x) x$ols4_coef))
-mean(sapply(small_frac1.8N200, function(x) x$ols5_coef))
+mean(sapply(small_frac1.8N200, function(x) x$ols5_coef)) # no bias
 
 mean(sapply(small_frac1.8N500, function(x) x$ols1_coef))
 mean(sapply(small_frac1.8N500, function(x) x$ols2_coef))
