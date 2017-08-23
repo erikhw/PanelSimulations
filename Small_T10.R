@@ -24,6 +24,8 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   y.lagged <- matrix(NA, ncol = N, nrow = Time)
   treat.lagged <- matrix(NA, ncol = N, nrow = Time)
   
+  alphai <- rnorm(n = N, mean = 10, sd = 6)
+  gammat <- rnorm(n = Time, mean = 10, sd = 6)
   
   x <- matrix(rep(NA, N*Time), ncol = N)
   for (i in 1:N) {
@@ -440,8 +442,8 @@ reps <- 3000
 cat("Now we are doing New_N50_ephi0.5_T10_hetereo \n")
 
 
-alphai <- rnorm(n =100000, mean = 10, sd = 6)
-gammat <- rnorm(n = 20, mean = 10, sd = 6)
+# alphai <- rnorm(n =100000, mean = 10, sd = 6)
+# gammat <- rnorm(n = 20, mean = 10, sd = 6)
 
 small_N50 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
   out <- sim_wfe2(frac = 1.5, N = 50, Time = 10, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
