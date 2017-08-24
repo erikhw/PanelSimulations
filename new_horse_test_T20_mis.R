@@ -516,34 +516,34 @@ gammat <- rnorm(n = 20, mean = 10, sd = 6)
 reps <- 2000
 
 ### hetereo ###
-cat("Now we are doing New_N50_ephi0.5_T20_hetereo \n")
-New_N50_ephi0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+cat("Now we are doing New_N50_ephi0.5_T20_hetereo_mis \n")
+New_N50_ephi0.5_T20_hetereo_mis <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
   out <- sim_wfe2(N = 50, T = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
-save(New_N50_ephi0.5_T20_hetereo, file = "New_N50_ephi0.5_T20_hetereo")
+save(New_N50_ephi0.5_T20_hetereo_mis, file = "New_N50_ephi0.5_T20_hetereo_mis")
 
-cat("Now we are doing New_N100_ephi0.5_T20_hetereo \n")
-New_N100_ephi0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+cat("Now we are doing New_N100_ephi0.5_T20_hetereo_mis \n")
+New_N100_ephi0.5_T20_hetereo_mis <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
   out <- sim_wfe2(N = 100, T = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
-save(New_N100_ephi0.5_T20_hetereo, file = "New_N100_ephi0.5_T20_hetereo")
+save(New_N100_ephi0.5_T20_hetereo_mis, file = "New_N100_ephi0.5_T20_hetereo_mis")
 
-cat("Now we are doing New_N200_ephi0.5_T20_hetereo \n")
-New_N200_ephi0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+cat("Now we are doing New_N200_ephi0.5_T20_hetereo_mis \n")
+New_N200_ephi0.5_T20_hetereo_mis <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
   out <- sim_wfe2(N = 200, T = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
-save(New_N200_ephi0.5_T20_hetereo, file = "New_N200_ephi0.5_T20_hetereo")
+save(New_N200_ephi0.5_T20_hetereo_mis, file = "New_N200_ephi0.5_T20_hetereo_mis")
 
 
-cat("Now we are doing New_N500_ephi0.5_T20_hetereo \n")
-New_N500_ephi0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+cat("Now we are doing New_N500_ephi0.5_T20_hetereo_mis \n")
+New_N500_ephi0.5_T20_hetereo_mis <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
   out <- sim_wfe2(N = 500, T = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
-save(New_N500_ephi0.5_T20_hetereo, file = "New_N500_ephi0.5_T20_hetereo")
+save(New_N500_ephi0.5_T20_hetereo_mis, file = "New_N500_ephi0.5_T20_hetereo_mis")
 # 
 # 
 # ### hetereo ###

@@ -10,3 +10,5 @@ plm
 pforeach
 scales
 knitr
+gridExtra
+cowplot
