@@ -52,7 +52,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
     treat[1,i] <- rbinom(1,1, prob/frac)
     eps[1, i] <- rnorm(1, 0, 6)
     y[1,i] <- rho_1*y.lagged[1,i] + alphai[i] + gammat[1] + 
-      beta*treat[1,i] + lagTreOutc*treat.lagged[1,i] + beta_x*x[1,i] + beta_x2*x2[1,i] +
+      beta*treat[1,i] + lagTreOutc*treat.lagged[1,i] + beta_x*x[1,i]^2 + beta_x2*x2[1,i] +
       eps[1,i]
     
     for (t in 2:Time) {
@@ -69,7 +69,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
       }
       
       # truth:
-      y[t, i] <- rho_1*y[t-1, i] + beta*treat[t,i] + lagTreOutc*treat[t-1,i] + beta_x*x[t,i] + beta_x2*x2[t,i] + 
+      y[t, i] <- rho_1*y[t-1, i] + beta*treat[t,i] + lagTreOutc*treat[t-1,i] + beta_x*x[t,i]^2 + beta_x2*x2[t,i] + 
         alphai[i] + gammat[t] + eps[t, i] # the current period
       
       y.lagged[t,i] <- y[t-1,i]
@@ -117,18 +117,17 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
                                                 data = Data.obs),
                                      error = function(err) NA)
   
-  
   cat("\n ----------------------- \n")
   cat("Matches_CBPS_lag.one \n")
   cat("\n ----------------------- \n")
   
   Matches_CBPS_lag.one <- tryCatch(PanelMatch(lag = lag.one, max.lead = lead, time.id = "time",
-                                                unit.id = "unit",
-                                                treatment = "treat", formula = y ~ treat + x,
-                                                method = "CBPS",
-                                                qoi = "ate", M = M,
-                                                data = Data.obs),
-                                     error = function(err) NA)
+                                              unit.id = "unit",
+                                              treatment = "treat", formula = y ~ treat + x,
+                                              method = "CBPS",
+                                              qoi = "ate", M = M,
+                                              data = Data.obs),
+                                   error = function(err) NA)
   
 
   cat("\n ----------------------- \n")
@@ -228,14 +227,14 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   cat("\n ----------------------- \n")
   
   CBPS_wfe_lag.one <- tryCatch(PanelEstimate_tmp2(lead = lead,
-                                                    inference = "wfe", ITER = ITER, CI = .9,
-                                                    matched_sets = Matches_CBPS_lag.one),
-                                 error = function(err) NA)
+                                                  inference = "wfe", ITER = ITER, CI = .9,
+                                                  matched_sets = Matches_CBPS_lag.one),
+                               error = function(err) NA)
   
   CBPS_wfe_lag.one_cover <- tryCatch(ifelse(1 < CBPS_wfe_lag.one$coefficients[1] + CBPS_wfe_lag.one$se*qnorm(.95) &
-                                                1 > CBPS_wfe_lag.one$coefficients[1] - CBPS_wfe_lag.one$se*qnorm(.95),
-                                              1,
-                                              0), error = function(err) NA)
+                                              1 > CBPS_wfe_lag.one$coefficients[1] - CBPS_wfe_lag.one$se*qnorm(.95),
+                                            1,
+                                            0), error = function(err) NA)
   
   
   # tryCatch(if(t(colQuantiles(CBPS_wfe_lag.one$boots,
@@ -247,6 +246,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   # } else {
   #   coverage_CBPS_wfe_lag.one <- 0
   # }, error = function(err) NA)
+  
   
   
 
@@ -285,14 +285,15 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   cat("Matches_CBPS_lag.two \n")
   cat("\n ----------------------- \n")
   
-  
   Matches_CBPS_lag.two <- tryCatch(PanelMatch(lag = lag.two, max.lead = lead, time.id = "time",
-                                                unit.id = "unit",
-                                                treatment = "treat", formula = y ~ treat + x,
-                                                method = "CBPS",
-                                                qoi = "ate", M = M,
-                                                data = Data.obs),
-                                     error = function(err) NA)
+                                              unit.id = "unit",
+                                              treatment = "treat", formula = y ~ treat + x,
+                                              method = "CBPS",
+                                              qoi = "ate", M = M,
+                                              data = Data.obs),
+                                   error = function(err) NA)
+  
+  
   
   
 
@@ -354,20 +355,20 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
                                             1,
                                             0), error = function(err) NA)
   
-  
   cat("\n ----------------------- \n")
   cat("CBPS_wfe_lag.two \n")
   cat("\n ----------------------- \n")
   
   CBPS_wfe_lag.two <- tryCatch(PanelEstimate_tmp2(lead = lead,
-                                                    inference = "wfe", ITER = ITER, CI = .9,
-                                                    matched_sets = Matches_CBPS_lag.two),
-                                 error = function(err) NA)
+                                                  inference = "wfe", ITER = ITER, CI = .9,
+                                                  matched_sets = Matches_CBPS_lag.two),
+                               error = function(err) NA)
   
   CBPS_wfe_lag.two_cover <- tryCatch(ifelse(1 < CBPS_wfe_lag.two$coefficients[1] + CBPS_wfe_lag.two$se*qnorm(.95) &
-                                                1 > CBPS_wfe_lag.two$coefficients[1] - CBPS_wfe_lag.two$se*qnorm(.95),
-                                              1,
-                                              0), error = function(err) NA)
+                                              1 > CBPS_wfe_lag.two$coefficients[1] - CBPS_wfe_lag.two$se*qnorm(.95),
+                                            1,
+                                            0), error = function(err) NA)
+  
   
 
 
@@ -417,6 +418,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   CBPS_wfe_lag.two_se  <- tryCatch(CBPS_wfe_lag.two$se, error = function(err) NA)
   CBPS_wfe_lag.two_coef  <- tryCatch(CBPS_wfe_lag.two$coefficients[1], error = function(err) NA)
   
+  
 # 
 #   
 #   Synth_wfe_lag.one_se  <- tryCatch(sd(Synth_wfe_lag.one$boots, na.rm = T), error = function(err) NA)
@@ -447,44 +449,44 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   }, error = function(err) NA)
   
   
-  return(list("Synth_wfe_lag.one_se" = Synth_wfe_lag.one_se,
-     "Synth_wfe_lag.one_coef" = Synth_wfe_lag.one_coef,
-     "Synth_wfe_lag.one_coverage" = Synth_wfe_lag.one_cover,
+  return(list("Synth_wfe_mis_lag.one_se" = Synth_wfe_lag.one_se,
+     "Synth_wfe_mis_lag.one_coef" = Synth_wfe_lag.one_coef,
+     "Synth_wfe_mis_lag.one_coverage" = Synth_wfe_lag.one_cover,
     # 
-     "Maha_wfe_lag.one_se" = Maha_wfe_lag.one_se,
-     "Maha_wfe_lag.one_coef" = Maha_wfe_lag.one_coef,
-     "Maha_wfe_lag.one_coverage" = Maha_wfe_lag.one_cover,
+     "Maha_wfe_mis_lag.one_se" = Maha_wfe_lag.one_se,
+     "Maha_wfe_mis_lag.one_coef" = Maha_wfe_lag.one_coef,
+     "Maha_wfe_mis_lag.one_coverage" = Maha_wfe_lag.one_cover,
     # # 
-     "Pscore_wfe_lag.one_se" = Pscore_wfe_lag.one_se,
-     "Pscore_wfe_lag.one_coef" = Pscore_wfe_lag.one_coef,
-     "Pscore_wfe_lag.one_coverage" = Pscore_wfe_lag.one_cover,
+     "Pscore_wfe_mis_lag.one_se" = Pscore_wfe_lag.one_se,
+     "Pscore_wfe_mis_lag.one_coef" = Pscore_wfe_lag.one_coef,
+     "Pscore_wfe_mis_lag.one_coverage" = Pscore_wfe_lag.one_cover,
     
-     "CBPS_wfe_lag.one_se" = CBPS_wfe_lag.one_se,
-     "CBPS_wfe_lag.one_coef" = CBPS_wfe_lag.one_coef,
-     "CBPS_wfe_lag.one_coverage" = CBPS_wfe_lag.one_cover,
+     "CBPS_wfe_mis_lag.one_se" = CBPS_wfe_lag.one_se,
+     "CBPS_wfe_mis_lag.one_coef" = CBPS_wfe_lag.one_coef,
+     "CBPS_wfe_mis_lag.one_coverage" = CBPS_wfe_lag.one_cover,
     # 
-     "Synth_wfe_lag.two_se" = Synth_wfe_lag.two_se,
-     "Synth_wfe_lag.two_coef" = Synth_wfe_lag.two_coef,
-     "Synth_wfe_lag.two_coverage" = Synth_wfe_lag.two_cover,
+     "Synth_wfe_mis_lag.two_se" = Synth_wfe_lag.two_se,
+     "Synth_wfe_mis_lag.two_coef" = Synth_wfe_lag.two_coef,
+     "Synth_wfe_mis_lag.two_coverage" = Synth_wfe_lag.two_cover,
     
-     "Maha_wfe_lag.two_se" = Maha_wfe_lag.two_se,
-     "Maha_wfe_lag.two_coef" = Maha_wfe_lag.two_coef,
-     "Maha_wfe_lag.two_coverage" = Maha_wfe_lag.two_cover,
+     "Maha_wfe_mis_lag.two_se" = Maha_wfe_lag.two_se,
+     "Maha_wfe_mis_lag.two_coef" = Maha_wfe_lag.two_coef,
+     "Maha_wfe_mis_lag.two_coverage" = Maha_wfe_lag.two_cover,
     
-     "Pscore_wfe_lag.two_se" = Pscore_wfe_lag.two_se,
-     "Pscore_wfe_lag.two_coef" = Pscore_wfe_lag.two_coef,
-     "Pscore_wfe_lag.two_coverage" = Pscore_wfe_lag.two_cover,
+     "Pscore_wfe_mis_lag.two_se" = Pscore_wfe_lag.two_se,
+     "Pscore_wfe_mis_lag.two_coef" = Pscore_wfe_lag.two_coef,
+     "Pscore_wfe_mis_lag.two_coverage" = Pscore_wfe_lag.two_cover,
     
-     "CBPS_wfe_lag.two_se" = CBPS_wfe_lag.two_se,
-     "CBPS_wfe_lag.two_coef" = CBPS_wfe_lag.two_coef,
-     "CBPS_wfe_lag.two_coverage" = CBPS_wfe_lag.two_cover,
+     "CBPS_wfe_mis_lag.two_se" = CBPS_wfe_lag.two_se,
+     "CBPS_wfe_mis_lag.two_coef" = CBPS_wfe_lag.two_coef,
+     "CBPS_wfe_mis_lag.two_coverage" = CBPS_wfe_lag.two_cover,
     # 
 
     
-    "ols_coef" = ols_coef,
-    "ols_se" = ols_se,
-    "ols_rho" = ols_rho,
-    "ols_coverage" = coverage_ols,
+    "ols_mis_coef" = ols_coef,
+    "ols_mis_se" = ols_se,
+    "ols_mis_rho" = ols_rho,
+    "ols_mis_coverage" = coverage_ols,
     
     "prop" = mean(tapply(Data.obs$treat, Data.obs$unit, mean))
     # "ols_coef_mis" = ols_coef_mis,
