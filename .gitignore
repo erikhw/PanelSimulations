@@ -1,4 +1,4 @@
 *.Rmd
 Tables*
 *.html
-Tables.html
+*Tables.html

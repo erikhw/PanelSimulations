@@ -4,7 +4,7 @@
 #SBATCH -N 1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=19
-#SBATCH -t 40:00:00
+#SBATCH -t 60:00:00
 #SBATCH -J horse_race_simulations
 #SBATCH -o log-new_horse_test_T20.%j 
 #SBATCH --mail-type=begin

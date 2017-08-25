@@ -1,3 +1,5 @@
 *.Rmd
 Tables*
 *.html
+*Tables.html
+*loading_code.R
