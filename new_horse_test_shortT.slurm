@@ -5,7 +5,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=19
 #SBATCH -t 36:00:00
-#SBATCH -J shortT simulations 
+#SBATCH -J shortT_simulations 
 #SBATCH -o log-new_horse_test_shortT.%j 
 #SBATCH --mail-type=begin
 #SBATCH --mail-type=end
