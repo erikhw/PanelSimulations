@@ -435,7 +435,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
 }
 
 ## FEs ##
-set.seed(2017)
+set.seed(123)
 alphai <- rnorm(n =100000, mean = 0, sd = 1)
 gammat <- rnorm(n = 50, mean = 0, sd = 1)
 
