@@ -442,8 +442,8 @@ reps <- 3000
 cat("Now we are doing New_N50_ephi0.5_T10_hetereo \n")
 
 
-alphai <- rnorm(n =100000, mean = 0, sd = 2)
-gammat <- rnorm(n = 50, mean = 0, sd = 2)
+alphai <- rnorm(n =100000, mean = 0, sd = 1)
+gammat <- rnorm(n = 50, mean = 0, sd = 1)
 
 ## T = 5
 small_N50 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
