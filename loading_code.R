@@ -1445,6 +1445,8 @@ mean(sapply(small_T20_N1000, function(x) x$ols5_coef))
 
 setwd("~/Dropbox/w2fe/Simulations/results")
 load("New_N50_ephi0.5_T5_hetereo")
+New_N50_ephi0.5_T5_hetereo <- Filter(function (x) length(x) == 20, New_N50_ephi0.5_T5_hetereo)
+
 Synth_wfe_lag.one_coef_50 <- 1-mean(sapply(New_N50_ephi0.5_T5_hetereo, function (x) x$Synth_wfe_lag.one_coef), na.rm = T)
 
 Pscore_wfe_lag.one_coef_50 <- 1-mean(sapply(New_N50_ephi0.5_T5_hetereo, function (x) x$Pscore_wfe_lag.one_coef), na.rm = T)

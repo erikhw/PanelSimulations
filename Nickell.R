@@ -16,8 +16,8 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
                       beta = 1, beta_x = .2, beta_x2 = 0, 
                       phi = .3, rho_t_2 = .3, ephi = .5,
                       rho_2 = .3, M = 1, hetereo = T,
-                      x_fe = .3, frac = 1.3,
-                      ITER = 500) {
+                      x_fe = .3, frac = 1,
+                      ITER = 100) {
   y <- matrix(NA, ncol = N, nrow = Time)
   eps <- matrix(NA, ncol = N, nrow = Time)
   treat <- matrix(NA, ncol = N, nrow = Time)
@@ -434,6 +434,10 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   
 }
 
+## FEs ##
+set.seed(2017)
+alphai <- rnorm(n =100000, mean = 0, sd = 1)
+gammat <- rnorm(n = 50, mean = 0, sd = 1)
 
 # rho_t_1 = .8; rho_1 = .8
 reps <- 3000
@@ -442,8 +446,6 @@ reps <- 3000
 cat("Now we are doing New_N50_ephi0.5_T10_hetereo \n")
 
 
-alphai <- rnorm(n =100000, mean = 0, sd = 1)
-gammat <- rnorm(n = 50, mean = 0, sd = 1)
 
 ## T = 5
 small_N50 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
