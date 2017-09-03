@@ -4,9 +4,10 @@ rm(list=ls())
 # library(devtools)
 # install_github("insongkim/wfe", ref = "new_branch")
 # load packages
-pkg <- c("wfe", "ggplot2", "plm", "pforeach")
+pkg <- c("wfe", "ggplot2", "plm", "pforeach", "matrixStats")
 lapply(pkg, require, character.only = TRUE)
 setwd("/home/haixiaow/Simulate/Simulations/results")
+
 
 sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
                       lead = 0,
@@ -15,20 +16,22 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
                       beta = 1, beta_x = .2, beta_x2 = 0, 
                       phi = .3, rho_t_2 = .3, ephi = .5,
                       rho_2 = .3, M = 1, hetereo = T,
-                      x_fe = 0, frac = 1.3,
-                      ITER = 500) {
+                      x_fe = .3, frac = 1,
+                      ITER = 100) {
   y <- matrix(NA, ncol = N, nrow = Time)
   eps <- matrix(NA, ncol = N, nrow = Time)
   treat <- matrix(NA, ncol = N, nrow = Time)
   y.lagged <- matrix(NA, ncol = N, nrow = Time)
   treat.lagged <- matrix(NA, ncol = N, nrow = Time)
   
-  
+  # alphai <- rnorm(n = N, mean = 10, sd = 6)
+  # gammat <- rnorm(n = Time, mean = 10, sd = 6)
+  # 
   x <- matrix(rep(NA, N*Time), ncol = N)
   for (i in 1:N) {
-    x[1, i] <- rnorm(1, 3, 1) + x_fe*gammat[1] + x_fe*alphai[i]
+    x[1, i] <- rnorm(1, 0.5, 1) # + x_fe*gammat[1] + x_fe*alphai[i]
     for(t in 2:Time){
-      x[t, i] <- phi*x[t-1, i] + rnorm(1, 3, 1) + x_fe*gammat[t] + x_fe*alphai[i]
+      x[t, i] <- phi*x[t-1, i] + rnorm(1, 0.5, 1) # + x_fe*gammat[t] + x_fe*alphai[i]
     }
     
   }
@@ -50,7 +53,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
     prob <- exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1])/
       (1+exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1]))
     treat[1,i] <- rbinom(1,1, prob/frac)
-    eps[1, i] <- rnorm(1, 0, 6)
+    eps[1, i] <- rnorm(1, 0, sd = runif(1, 2, 4))
     y[1,i] <- rho_1*y.lagged[1,i] + alphai[i] + gammat[1] + 
       beta*treat[1,i] + lagTreOutc*treat.lagged[1,i] + beta_x*x[1,i] + beta_x2*x2[1,i] +
       eps[1,i]
@@ -63,7 +66,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
       treat.lagged[t,i] <- treat[t-1,i]
       
       if(hetereo == T) {
-        eps[t, i] <- ephi*eps[t-1, i] + rnorm(n = 1, mean = 0, sd = runif(1, 3, 6))
+        eps[t, i] <- ephi*eps[t-1, i] + rnorm(n = 1, mean = 0, sd = runif(1, 2, 4))
       } else {
         eps[t, i] <- ephi*eps[t-1, i] + rnorm(n = 1, mean = 0, sd = 6)
       }
@@ -501,14 +504,13 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   
 }
 
-
+## FEs ##
+set.seed(2017)
+alphai <- rnorm(n =100000, mean = 0, sd = 1)
+gammat <- rnorm(n = 50, mean = 0, sd = 1)
 
 ### hetereo ###
 cat("Now we are doing New_N50_ephi0.5_T10_hetereo \n")
-
-
-alphai <- rnorm(n =1000, mean = 10, sd = 6)
-gammat <- rnorm(n = 20, mean = 10, sd = 6)
 
 # rho_t_1 = .8; rho_1 = .8
 reps <- 2000
@@ -536,12 +538,12 @@ New_N200_ephi0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
 save(New_N200_ephi0.5_T20_hetereo, file = "New_N200_ephi0.5_T20_hetereo")
 
 
-cat("Now we are doing New_N500_ephi0.5_T20_hetereo \n")
-New_N500_ephi0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
-  out <- sim_wfe2(N = 500, T = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+cat("Now we are doing New_N300_ephi0.5_T20_hetereo \n")
+New_N300_ephi0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
+  out <- sim_wfe2(N = 300, T = 20, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
-save(New_N500_ephi0.5_T20_hetereo, file = "New_N500_ephi0.5_T20_hetereo")
+save(New_N300_ephi0.5_T20_hetereo, file = "New_N300_ephi0.5_T20_hetereo")
 # 
 # 
 # ### hetereo ###

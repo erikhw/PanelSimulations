@@ -16,7 +16,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 1, lag.two = 2,
                       beta = 1, beta_x = .2, beta_x2 = 0, 
                       phi = .3, rho_t_2 = .3, ephi = .5,
                       rho_2 = .3, M = 1, hetereo = T,
-                      x_fe = .3, frac = 1.3,
+                      x_fe = .3, frac = 1,
                       ITER = 100) {
   y <- matrix(NA, ncol = N, nrow = Time)
   eps <- matrix(NA, ncol = N, nrow = Time)
@@ -384,8 +384,8 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 1, lag.two = 2,
 }
 
 ## FEs ##
-alphai <- rnorm(n =100000, mean = 0, sd = 2)
-gammat <- rnorm(n = 50, mean = 0, sd = 2)
+alphai <- rnorm(n =100000, mean = 0, sd = 1)
+gammat <- rnorm(n = 50, mean = 0, sd = 1)
 
 
 # rho_t_1 = .8; rho_1 = .8
