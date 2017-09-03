@@ -53,7 +53,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
     prob <- exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1])/
       (1+exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1]))
     treat[1,i] <- rbinom(1,1, prob/frac)
-    eps[1, i] <- rnorm(1, 0, sd = runif(1, 1, 2))
+    eps[1, i] <- rnorm(1, 0, sd = runif(1, 2, 4))
     y[1,i] <- rho_1*y.lagged[1,i] + alphai[i] + gammat[1] + 
       beta*treat[1,i] + lagTreOutc*treat.lagged[1,i] + beta_x*x[1,i] + beta_x2*x2[1,i] +
       eps[1,i]
@@ -66,7 +66,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
       treat.lagged[t,i] <- treat[t-1,i]
       
       if(hetereo == T) {
-        eps[t, i] <- ephi*eps[t-1, i] + rnorm(n = 1, mean = 0, sd = runif(1, 1, 2))
+        eps[t, i] <- ephi*eps[t-1, i] + rnorm(n = 1, mean = 0, sd = runif(1, 2, 4))
       } else {
         eps[t, i] <- ephi*eps[t-1, i] + rnorm(n = 1, mean = 0, sd = 6)
       }
@@ -442,8 +442,8 @@ reps <- 3000
 cat("Now we are doing New_N50_ephi0.5_T10_hetereo \n")
 
 
-alphai <- rnorm(n =100000, mean = 0, sd = .5)
-gammat <- rnorm(n = 50, mean = 0, sd = .5)
+alphai <- rnorm(n =100000, mean = 0, sd = 1)
+gammat <- rnorm(n = 50, mean = 0, sd = 1)
 
 ## T = 5
 small_N50 <- pforeach(i = 1:reps,.cores = 19, .seed = 2017)({
