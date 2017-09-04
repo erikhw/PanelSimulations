@@ -381,6 +381,13 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
     coverage_ols5 <- 0
   }, error = function(err) NA)
   
+  # gmm_s <- tryCatch(pgmm(y ~ lag(y, 1) + treat + lag(x, 0) |lag(y, 2:99), 
+  #                        data = Data.obs, effect = "twoways",
+  #                        model = "onestep", transformation = "ld",
+  #                        index = c("unit","time")), error = function(err) NA)
+  # gmm_s_coef  <- tryCatch(gmm_s$coefficients[2], error = function(err) NA)
+  # gmm_s_se  <- tryCatch(sqrt(gmm_s$vcov)[2,2], error = function(err) NA)
+  
   
   return(list(# "Synth_wfe_lag.one_se" = Synth_wfe_lag.one_se,
               # "Synth_wfe_lag.one_coef" = Synth_wfe_lag.one_coef,
