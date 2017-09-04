@@ -52,7 +52,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
     # treat.error <- -4 #rnorm(1,-4)
     prob <- exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1])/
       (1+exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1]))
-    treat[1,i] <- rbinom(1,1, prob/frac)
+    treat[1,i] <- rbinom(1,1, 1-prob/frac)
     eps[1, i] <- rnorm(1, 0, sd = runif(1, 2, 4))
     y[1,i] <- rho_1*y.lagged[1,i] + alphai[i] + gammat[1] + 
       beta*treat[1,i] + lagTreOutc*treat.lagged[1,i] + beta_x*x[1,i] + beta_x2*x2[1,i] +
@@ -62,7 +62,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
       # treat.error <- -4 #rnorm(1,-4)
       prob <- exp(rho_t_1*y[t-1,i] + alphai[i] + rho_tt_1*treat[t-1,i] + rho_x*x[t,i] + rho_x2*x2[t,i] +gammat[t])/
         (1+exp(rho_t_1*y[t-1,i] + alphai[i] + rho_tt_1*treat[t-1,i] + rho_x*x[t,i] + rho_x2*x2[t,i] + gammat[t]))
-      treat[t,i] <- rbinom(1,1, prob/frac)
+      treat[t,i] <- rbinom(1,1, 1-prob/frac)
       treat.lagged[t,i] <- treat[t-1,i]
       
       if(hetereo == T) {
