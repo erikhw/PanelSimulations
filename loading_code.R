@@ -1044,6 +1044,19 @@ load("small_T30_N200")
 load("small_T30_N500")
 load("small_T30_N1000")
 
+load("small_T50_N50")
+load("small_T50_N100")
+load("small_T50_N200")
+load("small_T50_N500")
+load("small_T50_N1000")
+
+load("small_T100_N50")
+load("small_T100_N100")
+load("small_T100_N200")
+load("small_T100_N500")
+load("small_T100_N1000")
+
+
 
 
 
@@ -1180,6 +1193,72 @@ mean(sapply(small_T30_N1000, function(x) x$ols2_coef))
 mean(sapply(small_T30_N1000, function(x) x$ols3_coef))
 mean(sapply(small_T30_N1000, function(x) x$ols4_coef))
 mean(sapply(small_T30_N1000, function(x) x$ols5_coef))
+
+
+## T = 50
+# coef
+mean(sapply(small_T50_N50, function(x) x$ols1_coef))
+mean(sapply(small_T50_N50, function(x) x$ols2_coef))
+mean(sapply(small_T50_N50, function(x) x$ols3_coef)) # no bias
+mean(sapply(small_T50_N50, function(x) x$ols4_coef))
+mean(sapply(small_T50_N50, function(x) x$ols5_coef))
+
+mean(sapply(small_T50_N100, function(x) x$ols1_coef)) # no bias
+mean(sapply(small_T50_N100, function(x) x$ols2_coef))
+mean(sapply(small_T50_N100, function(x) x$ols3_coef)) # no bias
+mean(sapply(small_T50_N100, function(x) x$ols4_coef))
+mean(sapply(small_T50_N100, function(x) x$ols5_coef))
+
+mean(sapply(small_T50_N200, function(x) x$ols1_coef)) # no bias
+mean(sapply(small_T50_N200, function(x) x$ols2_coef))
+mean(sapply(small_T50_N200, function(x) x$ols3_coef)) # no bias
+mean(sapply(small_T50_N200, function(x) x$ols4_coef))
+mean(sapply(small_T50_N200, function(x) x$ols5_coef))
+
+mean(sapply(small_T50_N500, function(x) x$ols1_coef))
+mean(sapply(small_T50_N500, function(x) x$ols2_coef))
+mean(sapply(small_T50_N500, function(x) x$ols3_coef)) # no bias
+mean(sapply(small_T50_N500, function(x) x$ols4_coef))
+mean(sapply(small_T50_N500, function(x) x$ols5_coef))
+
+mean(sapply(small_T50_N1000, function(x) x$ols1_coef))
+mean(sapply(small_T50_N1000, function(x) x$ols2_coef))
+mean(sapply(small_T50_N1000, function(x) x$ols3_coef))
+mean(sapply(small_T50_N1000, function(x) x$ols4_coef))
+mean(sapply(small_T50_N1000, function(x) x$ols5_coef))
+
+## T = 100
+# coef
+mean(sapply(small_T100_N50, function(x) x$ols1_coef))
+mean(sapply(small_T100_N50, function(x) x$ols2_coef))
+mean(sapply(small_T100_N50, function(x) x$ols3_coef)) # no bias
+mean(sapply(small_T100_N50, function(x) x$ols4_coef))
+mean(sapply(small_T100_N50, function(x) x$ols5_coef))
+
+mean(sapply(small_T100_N100, function(x) x$ols1_coef)) # no bias
+mean(sapply(small_T100_N100, function(x) x$ols2_coef))
+mean(sapply(small_T100_N100, function(x) x$ols3_coef)) # no bias
+mean(sapply(small_T100_N100, function(x) x$ols4_coef))
+mean(sapply(small_T100_N100, function(x) x$ols5_coef))
+
+mean(sapply(small_T100_N200, function(x) x$ols1_coef)) # no bias
+mean(sapply(small_T100_N200, function(x) x$ols2_coef))
+mean(sapply(small_T100_N200, function(x) x$ols3_coef)) # no bias
+mean(sapply(small_T100_N200, function(x) x$ols4_coef))
+mean(sapply(small_T100_N200, function(x) x$ols5_coef))
+
+mean(sapply(small_T100_N500, function(x) x$ols1_coef))
+mean(sapply(small_T100_N500, function(x) x$ols2_coef))
+mean(sapply(small_T100_N500, function(x) x$ols3_coef)) # no bias
+mean(sapply(small_T100_N500, function(x) x$ols4_coef))
+mean(sapply(small_T100_N500, function(x) x$ols5_coef))
+
+mean(sapply(small_T100_N1000, function(x) x$ols1_coef))
+mean(sapply(small_T100_N1000, function(x) x$ols2_coef))
+mean(sapply(small_T100_N1000, function(x) x$ols3_coef))
+mean(sapply(small_T100_N1000, function(x) x$ols4_coef))
+mean(sapply(small_T100_N1000, function(x) x$ols5_coef))
+
 
 
 
@@ -1503,4 +1582,33 @@ CBPS_wfe_lag.two_coef_100
 Maha_wfe_lag.one_coef_100
 Maha_wfe_lag.two_coef_100
 ols_coef_100
+
+load("New_N200_ephi0.5_T20_hetereo_ovb")
+Synth_wfe_lag.one_coef_200 <- 1-mean(sapply(New_N200_ephi0.5_T20_hetereo_ovb, function (x) x$Synth_wfe_lag.one_coef), na.rm = T)
+
+Pscore_wfe_lag.one_coef_200 <- 1-mean(sapply(New_N200_ephi0.5_T20_hetereo_ovb, function (x) x$Pscore_wfe_lag.one_coef), na.rm = T)
+
+CBPS_wfe_lag.one_coef_200 <- 1-mean(sapply(New_N200_ephi0.5_T20_hetereo_ovb, function (x) x$CBPS_wfe_lag.one_coef), na.rm = T)
+
+Maha_wfe_lag.one_coef_200 <- 1-mean(sapply(New_N200_ephi0.5_T20_hetereo_ovb, function (x) x$Maha_wfe_lag.one_coef), na.rm = T)
+
+Synth_wfe_lag.two_coef_200 <- 1-mean(sapply(New_N200_ephi0.5_T20_hetereo_ovb, function (x) x$Synth_wfe_lag.two_coef), na.rm = T)
+
+Pscore_wfe_lag.two_coef_200 <- 1-mean(sapply(New_N200_ephi0.5_T20_hetereo_ovb, function (x) x$Pscore_wfe_lag.two_coef), na.rm = T)
+
+CBPS_wfe_lag.two_coef_200 <- 1-mean(sapply(New_N200_ephi0.5_T20_hetereo_ovb, function (x) x$CBPS_wfe_lag.two_coef), na.rm = T)
+
+Maha_wfe_lag.two_coef_200 <- 1-mean(sapply(New_N200_ephi0.5_T20_hetereo_ovb, function (x) x$Maha_wfe_lag.two_coef), na.rm = T)
+
+ols_coef_200 <- 1-mean(sapply(New_N200_ephi0.5_T20_hetereo_ovb, function (x) x$ols_coef), na.rm = T)
+
+Synth_wfe_lag.one_coef_200
+Synth_wfe_lag.two_coef_200
+Pscore_wfe_lag.one_coef_200
+Pscore_wfe_lag.two_coef_200
+CBPS_wfe_lag.one_coef_200
+CBPS_wfe_lag.two_coef_200
+Maha_wfe_lag.one_coef_200
+Maha_wfe_lag.two_coef_200
+ols_coef_200
 

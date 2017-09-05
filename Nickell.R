@@ -88,185 +88,10 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   ## generate unit and time index
   unit.index <- rep(1:N, each = Time)
   time.index <- rep(1:Time, N)
-  # Data.str <- as.data.frame(cbind(y.vec, treat.vec, unit.index, x1.vec, x2.vec))
-  # colnames(Data.str) <- c("y", "tr", "strata.id", "x1", "x2")
   Data.obs <- as.data.frame(cbind(time.index, unit.index, y.vec, y.lagged.vec,
                                   treat.vec, treat.lagged.vec, x.vec))
   colnames(Data.obs) <- c("time", "unit", "y", "y_l1", "treat", "treat_l1", "x")
-  # ##### L = 4
-  # ### Correct Models:
-  # ## matched sets
-  # cat("\n ----------------------- \n")
-  # cat("Matches_Maha_lag.one \n")
-  # cat("\n ----------------------- \n")
-  # Matches_Maha_lag.one <- tryCatch(PanelMatch(lag = lag.one, max.lead = lead, time.id = "time", 
-  #                                             unit.id = "unit",
-  #                                             treatment = "treat", 
-  #                                             formula = y~treat + x, 
-  #                                             method = "Maha",
-  #                                             qoi = "ate", M = M,
-  #                                             data = Data.obs), 
-  #                                  error = function(err) NA)
-  # 
-  # cat("\n ----------------------- \n")
-  # cat("Matches_Pscore_lag.one \n")
-  # cat("\n ----------------------- \n")
-  # 
-  # Matches_Pscore_lag.one <- tryCatch(PanelMatch(lag = lag.one, max.lead = lead, time.id = "time", 
-  #                                               unit.id = "unit",
-  #                                               treatment = "treat", formula = y ~ treat + x, 
-  #                                               method = "Pscore",
-  #                                               qoi = "ate", M = M,
-  #                                               data = Data.obs),
-  #                                    error = function(err) NA)
-  # 
-  # cat("\n ----------------------- \n")
-  # cat("Matches_Synth_lag.one \n")
-  # cat("\n ----------------------- \n")
-  # Matches_Synth_lag.one <- tryCatch(PanelMatch(lag = lag.one, max.lead = lead, time.id = "time", 
-  #                                              unit.id = "unit",
-  #                                              treatment = "treat", formula = y ~ treat + x, 
-  #                                              method = "Synth",
-  #                                              qoi = "ate", 
-  #                                              data = Data.obs),
-  #                                   error = function(err) NA)
-  # 
-  # 
-  # cat("\n ----------------------- \n")
-  # cat("Synth_wfe_lag.one \n")
-  # cat("\n ----------------------- \n")
-  # 
-  # ### PanelEstimate ###
-  # Synth_wfe_lag.one <- tryCatch(PanelEstimate_tmp2(lead = lead, 
-  #                                                  inference = "bootstrap", ITER = ITER, CI = .9,
-  #                                                  matched_sets = Matches_Synth_lag.one),
-  #                               error = function(err) NA)
-  # 
-  # tryCatch(if(t(colQuantiles(Synth_wfe_lag.one$boots,
-  #                            probs = c((1-Synth_wfe_lag.one$CI)/2, Synth_wfe_lag.one$CI+(1-Synth_wfe_lag.one$CI)/2), 
-  #                            na.rm = T, drop = FALSE))[1] < 1 & t(colQuantiles(Synth_wfe_lag.one$boots,
-  #                                                                              probs = c((1-Synth_wfe_lag.one$CI)/2, Synth_wfe_lag.one$CI+(1-Synth_wfe_lag.one$CI)/2), 
-  #                                                                              na.rm = T, drop = FALSE))[2] > 1) {
-  #   coverage_Synth_wfe_lag.one <- 1
-  # } else {
-  #   coverage_Synth_wfe_lag.one <- 0
-  # }, error = function(err) NA)
-  # 
-  # 
-  # 
-  # cat("\n ----------------------- \n")
-  # cat("Maha_wfe_lag.one \n")
-  # cat("\n ----------------------- \n")
-  # 
-  # Maha_wfe_lag.one <- tryCatch(PanelEstimate_tmp2(lead = lead, inference = "bootstrap", ITER = ITER, CI = .9,
-  #                                                 matched_sets = Matches_Maha_lag.one),
-  #                              error = function(err) NA)
-  # tryCatch(if(t(colQuantiles(Maha_wfe_lag.one$boots,
-  #                            probs = c((1-Maha_wfe_lag.one$CI)/2, Maha_wfe_lag.one$CI+(1-Maha_wfe_lag.one$CI)/2), 
-  #                            na.rm = T, drop = FALSE))[1] < 1 & t(colQuantiles(Maha_wfe_lag.one$boots,
-  #                                                                              probs = c((1-Maha_wfe_lag.one$CI)/2, Maha_wfe_lag.one$CI+(1-Maha_wfe_lag.one$CI)/2), 
-  #                                                                              na.rm = T, drop = FALSE))[2] > 1) {
-  #   coverage_Maha_wfe_lag.one <- 1
-  # } else {
-  #   coverage_Maha_wfe_lag.one <- 0
-  # }, error = function(err) NA)
-  # 
-  # 
-  # 
-  # cat("\n ----------------------- \n")
-  # cat("Pscore_wfe_lag.one \n")
-  # cat("\n ----------------------- \n")
-  # 
-  # Pscore_wfe_lag.one <- tryCatch(PanelEstimate_tmp2(lead = lead, 
-  #                                                   inference = "bootstrap", ITER = ITER, CI = .9,
-  #                                                   matched_sets = Matches_Pscore_lag.one),
-  #                                error = function(err) NA)
-  # 
-  # 
-  # tryCatch(if(t(colQuantiles(Pscore_wfe_lag.one$boots,
-  #                            probs = c((1-Pscore_wfe_lag.one$CI)/2, Pscore_wfe_lag.one$CI+(1-Pscore_wfe_lag.one$CI)/2), 
-  #                            na.rm = T, drop = FALSE))[1] < 1 & t(colQuantiles(Pscore_wfe_lag.one$boots,
-  #                                                                              probs = c((1-Pscore_wfe_lag.one$CI)/2, Pscore_wfe_lag.one$CI+(1-Pscore_wfe_lag.one$CI)/2), 
-  #                                                                              na.rm = T, drop = FALSE))[2] > 1) {
-  #   coverage_Pscore_wfe_lag.one <- 1
-  # } else {
-  #   coverage_Pscore_wfe_lag.one <- 0
-  # }, error = function(err) NA)
-  # 
-  
-  # ##### L = 6
-  # ### Correct Models:
-  # ## matched sets
-  # 
-  # cat("\n ----------------------- \n")
-  # cat("Matches_Maha_lag.two \n")
-  # cat("\n ----------------------- \n")
-  # 
-  # Matches_Maha_lag.two <- tryCatch(PanelMatch(lag = lag.two, max.lead = lead, time.id = "time", 
-  #                                             unit.id = "unit",
-  #                                             treatment = "treat", 
-  #                                             formula = y~treat + x, 
-  #                                             method = "Maha",
-  #                                             qoi = "ate", M = M,
-  #                                             data = Data.obs), 
-  #                                  error = function(err) NA)
-  # 
-  # cat("\n ----------------------- \n")
-  # cat("Matches_Pscore_lag.two \n")
-  # cat("\n ----------------------- \n")
-  # 
-  # 
-  # Matches_Pscore_lag.two <- tryCatch(PanelMatch(lag = lag.two, max.lead = lead, time.id = "time", 
-  #                                               unit.id = "unit",
-  #                                               treatment = "treat", formula = y ~ treat + x, 
-  #                                               method = "Pscore",
-  #                                               qoi = "ate", M = M,
-  #                                               data = Data.obs),
-  #                                    error = function(err) NA)
-  # 
-  # cat("\n ----------------------- \n")
-  # cat("Matches_Synth_lag.two \n")
-  # cat("\n ----------------------- \n")
-  # 
-  # Matches_Synth_lag.two <- tryCatch(PanelMatch(lag = lag.two, max.lead = lead, time.id = "time", 
-  #                                              unit.id = "unit",
-  #                                              treatment = "treat", formula = y ~ treat + x, 
-  #                                              method = "Synth",
-  #                                              qoi = "ate", 
-  #                                              data = Data.obs),
-  #                                   error = function(err) NA)
-  # 
-  # 
-  # ### PanelEstimate ###
-  # 
-  # cat("\n ----------------------- \n")
-  # cat("Synth_wfe_lag.two \n")
-  # cat("\n ----------------------- \n")
-  # 
-  # Synth_wfe_lag.two <- tryCatch(PanelEstimate_tmp2(lead = lead, 
-  #                                                  inference = "bootstrap", ITER = ITER, CI = .9,
-  #                                                  matched_sets = Matches_Synth_lag.two),
-  #                               error = function(err) NA)
-  # 
-  # 
-  # cat("\n ----------------------- \n")
-  # cat("Maha_wfe_lag.two \n")
-  # cat("\n ----------------------- \n")
-  # 
-  # Maha_wfe_lag.two <- tryCatch(PanelEstimate_tmp2(lead = lead, inference = "bootstrap", ITER = ITER, CI = .9,
-  #                                                 matched_sets = Matches_Maha_lag.two),
-  #                              error = function(err) NA)
-  # 
-  # cat("\n ----------------------- \n")
-  # cat("Pscore_wfe_lag.two \n")
-  # cat("\n ----------------------- \n")
-  # 
-  # Pscore_wfe_lag.two <- tryCatch(PanelEstimate_tmp2(lead = lead, 
-  #                                                   inference = "bootstrap", ITER = ITER, CI = .9,
-  #                                                   matched_sets = Matches_Pscore_lag.two),
-  #                                error = function(err) NA)
-  # 
-  # 
+
   cat("\n ----------------------- \n")
   cat("ols \n")
   cat("\n ----------------------- \n")
@@ -319,24 +144,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   cat("summarizing stuff \n")
   cat("\n ----------------------- \n")
   
-  # Synth_wfe_lag.one_se  <- tryCatch(sd(Synth_wfe_lag.one$boots, na.rm = T), error = function(err) NA)
-  # Synth_wfe_lag.one_coef  <- tryCatch(Synth_wfe_lag.one$o.coef, error = function(err) NA)
-  # 
-  # Maha_wfe_lag.one_se  <- tryCatch(sd(Maha_wfe_lag.one$boots, na.rm = T), error = function(err) NA)
-  # Maha_wfe_lag.one_coef  <- tryCatch(Maha_wfe_lag.one$o.coef, error = function(err) NA)
-  # 
-  # Pscore_wfe_lag.one_se  <- tryCatch(sd(Pscore_wfe_lag.one$boots, na.rm = T), error = function(err) NA)
-  # Pscore_wfe_lag.one_coef  <- tryCatch(Pscore_wfe_lag.one$o.coef, error = function(err) NA)
-  # 
-  # Synth_wfe_lag.two_se  <- tryCatch(Synth_wfe_lag.two$se, error = function(err) NA)
-  # Synth_wfe_lag.two_coef  <- tryCatch(Synth_wfe_lag.two$coefficients[1], error = function(err) NA)
-  # 
-  # Maha_wfe_lag.two_se  <- tryCatch(Maha_wfe_lag.two$se, error = function(err) NA)
-  # Maha_wfe_lag.two_coef  <- tryCatch(Maha_wfe_lag.two$coefficients[1], error = function(err) NA)
-  # 
-  # Pscore_wfe_lag.two_se  <- tryCatch(Pscore_wfe_lag.two$se, error = function(err) NA)
-  # Pscore_wfe_lag.two_coef  <- tryCatch(Pscore_wfe_lag.two$coefficients[1], error = function(err) NA)
-  # 
+ 
   ols1_coef  <- tryCatch(ols1$coefficients["treat"], error = function(err) NA)
   ols1_se  <- tryCatch(summary(ols1)[[4]][2, 2], error = function(err) NA)
   
@@ -381,35 +189,10 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   #   coverage_ols5 <- 0
   # }, error = function(err) NA)
   
-  # gmm_s <- tryCatch(pgmm(y ~ lag(y, 1) + treat + lag(x, 0) |lag(y, 2:99), 
-  #                        data = Data.obs, effect = "twoways",
-  #                        model = "onestep", transformation = "ld",
-  #                        index = c("unit","time")), error = function(err) NA)
-  # gmm_s_coef  <- tryCatch(gmm_s$coefficients[2], error = function(err) NA)
-  # gmm_s_se  <- tryCatch(sqrt(gmm_s$vcov)[2,2], error = function(err) NA)
+
   
   
-  return(list(# "Synth_wfe_lag.one_se" = Synth_wfe_lag.one_se,
-              # "Synth_wfe_lag.one_coef" = Synth_wfe_lag.one_coef,
-              # "Synth_wfe_lag.one_coverage" = coverage_Synth_wfe_lag.one,
-              
-              # "Maha_wfe_lag.one_se" = Maha_wfe_lag.one_se,
-              # "Maha_wfe_lag.one_coef" = Maha_wfe_lag.one_coef,
-              # "Maha_wfe_lag.one_coverage" = coverage_Maha_wfe_lag.one,
-              
-              # "Pscore_wfe_lag.one_se" = Pscore_wfe_lag.one_se,
-              # "Pscore_wfe_lag.one_coef" = Pscore_wfe_lag.one_coef,
-              # "Pscore_wfe_lag.one_coverage" = coverage_Pscore_wfe_lag.one,
-              
-              # "Synth_wfe_lag.two_se" = Synth_wfe_lag.two_se,
-              # "Synth_wfe_lag.two_coef" = Synth_wfe_lag.two_coef,
-              # 
-              # "Maha_wfe_lag.two_se" = Maha_wfe_lag.two_se,
-              # "Maha_wfe_lag.two_coef" = Maha_wfe_lag.two_coef,
-              # 
-              # "Pscore_wfe_lag.two_se" = Pscore_wfe_lag.two_se,
-              # "Pscore_wfe_lag.two_coef" = Pscore_wfe_lag.two_coef,
-              
+  return(list(
               "ols1_coef" = ols1_coef,
               "ols1_se" = ols1_se,
               "ols2_coef" = ols2_coef,
@@ -427,24 +210,15 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
               "ols5_rho" = ols5_rho,
               
               "prop" = mean(tapply(Data.obs$treat, Data.obs$unit, mean))
-              # "ols_coef_mis" = ols_coef_mis,
-              # "ols_se_mis" = ols_se_mis,
-              # "gmm_d_coef" = gmm_d_coef,
-              # "gmm_d_se" = gmm_d_se,
-              # "gmm_s_coef" = gmm_s_coef,
-              # "gmm_s_se" = gmm_s_se
-              # "gmm_d_mis_coef" = gmm_d_mis_coef,
-              # "gmm_d_mis_se" = gmm_d_mis_se,
-              # "gmm_s_mis_coef" = gmm_s_mis_coef,
-              # "gmm_s_mis_se" = gmm_s_mis_se
+ 
   ))
   
 }
 
 ## FEs ##
 set.seed(123)
-alphai <- rnorm(n =100000, mean = 0, sd = 1)
-gammat <- rnorm(n = 100, mean = 0, sd = 1)
+alphai <- runif(n = 100000, min = -1, max = 1)
+gammat <- runif(n = 100000, min = -1, max = 1)
 
 # rho_t_1 = .8; rho_1 = .8
 reps <- 3000
