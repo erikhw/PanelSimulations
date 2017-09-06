@@ -51,7 +51,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
     prob <- exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1] + treat.error)/
       (1+exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1] + treat.error))
     treat[1,i] <- rbinom(1,1, prob)
-    if (hetereo = F) {
+    if (hetereo == F) {
       eps[1, i] <- rnorm(1, 0, 2)
     } else {
       eps[1, i] <- rnorm(1, 0, runif(1, 1, 3))
