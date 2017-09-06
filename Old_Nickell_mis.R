@@ -47,7 +47,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   for (i in 1:N) {
     y.lagged[1, i] <- rnorm(1) + alphai[i] + gammat[1]
     treat.lagged[1,i] <- rbinom(1,1,exp(rho_x*x[1,i] + rho_x2*x2[1,i] + alphai[i] + gammat[1])/(1+exp(rho_x*x[1,i] + rho_x2*x2[1,i] + alphai[i] + gammat[1])))
-    treat.error <- 0
+    treat.error <- -4
     prob <- exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1] + treat.error)/
       (1+exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1] + treat.error))
     treat[1,i] <- rbinom(1,1, prob)
@@ -63,7 +63,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
       eps[1,i]
     
     for (t in 2:Time) {
-      treat.error <- 0
+      treat.error <- -4
       prob <- exp(rho_t_1*y[t-1,i] + alphai[i] + rho_tt_1*treat[t-1,i] + rho_x*x[t,i] + rho_x2*x2[t,i] +gammat[t] + treat.error)/
         (1+exp(rho_t_1*y[t-1,i] + alphai[i] + rho_tt_1*treat[t-1,i] + rho_x*x[t,i] + rho_x2*x2[t,i] + gammat[t] + treat.error))
       treat[t,i] <- rbinom(1,1, prob)
