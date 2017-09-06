@@ -51,7 +51,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
     prob <- exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1] + treat.error)/
       (1+exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1] + treat.error))
     treat[1,i] <- rbinom(1,1, prob)
-    if (hetereo = F) {
+    if (hetereo == F) {
       eps[1, i] <- rnorm(1, 0, 2)
     } else {
       eps[1, i] <- rnorm(1, 0, runif(1, 1, 3))
@@ -62,7 +62,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
       eps[1,i]
     
     for (t in 2:Time) {
-      treat.error <- rnorm(1,-4)
+      treat.error <- 0
       prob <- exp(rho_t_1*y[t-1,i] + alphai[i] + rho_tt_1*treat[t-1,i] + rho_x*x[t,i] + rho_x2*x2[t,i] +gammat[t] + treat.error)/
         (1+exp(rho_t_1*y[t-1,i] + alphai[i] + rho_tt_1*treat[t-1,i] + rho_x*x[t,i] + rho_x2*x2[t,i] + gammat[t] + treat.error))
       treat[t,i] <- rbinom(1,1, prob)
@@ -98,9 +98,9 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   colnames(Data.obs) <- c("time", "unit", "y", "y_l1", "treat", "treat_l1", "x")
   
   ols1 <- tryCatch(plm(y~treat + y_l1 + x, 
-              index = c("unit","time"), model = "within", 
-              effect = "twoways",
-              data = Data.obs), error = function(err) NA)
+                       index = c("unit","time"), model = "within", 
+                       effect = "twoways",
+                       data = Data.obs), error = function(err) NA)
   
   ols1_coef  <- tryCatch(ols1$coefficients[1], error = function(err) NA)
   ols1_se  <- tryCatch(sqrt(ols1$vcov["treat", "treat"]), error = function(err) NA)
