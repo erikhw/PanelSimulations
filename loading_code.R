@@ -1765,6 +1765,158 @@ mean(sapply(small_rho6_T100_N500, function(x) x$ols2_coef))
 mean(sapply(small_rho6_T100_N1000, function(x) x$ols1_coef))
 mean(sapply(small_rho6_T100_N1000, function(x) x$ols2_coef))
 
+########## 
+load("small_rho8_N50")
+load("small_rho8_N100")
+load("small_rho8_N200")
+load("small_rho8_N500")
+load("small_rho8_N1000")
 
+load("small_rho8_T10_N50")
+load("small_rho8_T10_N100")
+load("small_rho8_T10_N200")
+load("small_rho8_T10_N500")
+load("small_rho8_T10_N1000")
+
+load("small_rho8_T20_N50")
+load("small_rho8_T20_N100")
+load("small_rho8_T20_N200")
+load("small_rho8_T20_N500")
+load("small_rho8_T20_N1000")
+
+load("small_rho8_T30_N50")
+load("small_rho8_T30_N100")
+load("small_rho8_T30_N200")
+load("small_rho8_T30_N500")
+load("small_rho8_T30_N1000")
+
+load("small_rho8_T50_N50")
+load("small_rho8_T50_N100")
+load("small_rho8_T50_N200")
+load("small_rho8_T50_N500")
+load("small_rho8_T50_N1000")
+
+load("small_rho8_T100_N50")
+load("small_rho8_T100_N100")
+load("small_rho8_T100_N200")
+load("small_rho8_T100_N500")
+load("small_rho8_T100_N1000")
+
+
+## T = 5
+# coef
+mean(sapply(small_rho8_N50, function(x) x$ols1_coef))
+mean(sapply(small_rho8_N50, function(x) x$ols2_coef))
+
+
+mean(sapply(small_rho8_N100, function(x) x$ols1_coef)) # no bias
+mean(sapply(small_rho8_N100, function(x) x$ols2_coef))
+
+
+
+mean(sapply(small_rho8_N200, function(x) x$ols1_coef)) # no bias
+mean(sapply(small_rho8_N200, function(x) x$ols2_coef))
+
+mean(sapply(small_rho8_N500, function(x) x$ols1_coef))
+mean(sapply(small_rho8_N500, function(x) x$ols2_coef))
+
+mean(sapply(small_rho8_N1000, function(x) x$ols1_coef))
+mean(sapply(small_rho8_N1000, function(x) x$ols2_coef))
+
+
+## T = 10
+# coef
+mean(sapply(small_rho8_T10_N50, function(x) x$ols1_coef))
+mean(sapply(small_rho8_T10_N50, function(x) x$ols2_coef))
+
+mean(sapply(small_rho8_T10_N100, function(x) x$ols1_coef)) # no bias
+mean(sapply(small_rho8_T10_N100, function(x) x$ols2_coef))
+
+mean(sapply(small_rho8_T10_N200, function(x) x$ols1_coef)) # no bias
+mean(sapply(small_rho8_T10_N200, function(x) x$ols2_coef))
+
+mean(sapply(small_rho8_T10_N500, function(x) x$ols1_coef))
+mean(sapply(small_rho8_T10_N500, function(x) x$ols2_coef))
+
+mean(sapply(small_rho8_T10_N1000, function(x) x$ols1_coef))
+mean(sapply(small_rho8_T10_N1000, function(x) x$ols2_coef))
+
+## T = 20
+# coef
+mean(sapply(small_rho8_T20_N50, function(x) x$ols1_coef))
+mean(sapply(small_rho8_T20_N50, function(x) x$ols2_coef))
+
+mean(sapply(small_rho8_T20_N100, function(x) x$ols1_coef)) # no bias
+mean(sapply(small_rho8_T20_N100, function(x) x$ols2_coef))
+
+mean(sapply(small_rho8_T20_N200, function(x) x$ols1_coef)) # no bias
+mean(sapply(small_rho8_T20_N200, function(x) x$ols2_coef))
+
+mean(sapply(small_rho8_T20_N500, function(x) x$ols1_coef))
+mean(sapply(small_rho8_T20_N500, function(x) x$ols2_coef))
+
+mean(sapply(small_rho8_T20_N1000, function(x) x$ols1_coef))
+mean(sapply(small_rho8_T20_N1000, function(x) x$ols2_coef))
+
+
+
+## T = 30
+# coef
+mean(sapply(small_rho8_T30_N50, function(x) x$ols1_coef))
+mean(sapply(small_rho8_T30_N50, function(x) x$ols2_coef))
+
+
+mean(sapply(small_rho8_T30_N100, function(x) x$ols1_coef)) # no bias
+mean(sapply(small_rho8_T30_N100, function(x) x$ols2_coef))
+
+mean(sapply(small_rho8_T30_N200, function(x) x$ols1_coef)) # no bias
+mean(sapply(small_rho8_T30_N200, function(x) x$ols2_coef))
+
+mean(sapply(small_rho8_T30_N500, function(x) x$ols1_coef))
+mean(sapply(small_rho8_T30_N500, function(x) x$ols2_coef))
+
+
+mean(sapply(small_rho8_T30_N1000, function(x) x$ols1_coef))
+mean(sapply(small_rho8_T30_N1000, function(x) x$ols2_coef))
+
+
+## T = 50
+# coef
+mean(sapply(small_rho8_T50_N50, function(x) x$ols1_coef))
+mean(sapply(small_rho8_T50_N50, function(x) x$ols2_coef))
+
+mean(sapply(small_rho8_T50_N100, function(x) x$ols1_coef)) # no bias
+mean(sapply(small_rho8_T50_N100, function(x) x$ols2_coef))
+
+
+mean(sapply(small_rho8_T50_N200, function(x) x$ols1_coef)) # no bias
+mean(sapply(small_rho8_T50_N200, function(x) x$ols2_coef))
+
+
+mean(sapply(small_rho8_T50_N500, function(x) x$ols1_coef))
+mean(sapply(small_rho8_T50_N500, function(x) x$ols2_coef))
+
+mean(sapply(small_rho8_T50_N1000, function(x) x$ols1_coef))
+mean(sapply(small_rho8_T50_N1000, function(x) x$ols2_coef))
+
+
+## T = 100
+# coef
+mean(sapply(small_rho8_T100_N50, function(x) x$ols1_coef))
+mean(sapply(small_rho8_T100_N50, function(x) x$ols2_coef))
+
+mean(sapply(small_rho8_T100_N100, function(x) x$ols1_coef)) # no bias
+mean(sapply(small_rho8_T100_N100, function(x) x$ols2_coef))
+
+
+mean(sapply(small_rho8_T100_N200, function(x) x$ols1_coef)) # no bias
+mean(sapply(small_rho8_T100_N200, function(x) x$ols2_coef))
+
+mean(sapply(small_rho8_T100_N500, function(x) x$ols1_coef))
+mean(sapply(small_rho8_T100_N500, function(x) x$ols2_coef))
+
+
+mean(sapply(small_rho8_T100_N1000, function(x) x$ols1_coef))
+mean(sapply(small_rho8_T100_N1000, function(x) x$ols2_coef))
 
 
