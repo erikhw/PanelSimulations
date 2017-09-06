@@ -11,8 +11,8 @@ setwd("/home/haixiaow/Simulate/Simulations/results")
 
 sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
                       lead = 0,
-                      rho_1 = .4, rho_t_1 = .4, rho_tt_1 = .2, 
-                      rho_x = .4, rho_x2 = 0, lagTreOutc = .2, 
+                      rho_1 = .4, rho_t_1 = .4, rho_tt_1 = .4, 
+                      rho_x = .4, rho_x2 = 0, lagTreOutc = .4, 
                       beta = 1, beta_x = .2, beta_x2 = 0, 
                       phi = .75, rho_t_2 = .3, ephi = .5,
                       rho_2 = .3, M = 1, hetereo = T,
@@ -47,11 +47,11 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   for (i in 1:N) {
     y.lagged[1, i] <- rnorm(1) + alphai[i] + gammat[1]
     treat.lagged[1,i] <- rbinom(1,1,exp(rho_x*x[1,i] + rho_x2*x2[1,i] + alphai[i] + gammat[1])/(1+exp(rho_x*x[1,i] + rho_x2*x2[1,i] + alphai[i] + gammat[1])))
-    treat.error <- rnorm(1,-4)
+    treat.error <- 0
     prob <- exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1] + treat.error)/
       (1+exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1] + treat.error))
-    treat[1,i] <- rbinom(1,1, 1-prob)
-    eps[1, i] <- rnorm(1)
+    treat[1,i] <- rbinom(1,1, prob)
+    eps[1, i] <- rnorm(1, 0, 2)
     y[1,i] <-  rho_1*y.lagged[1,i] + alphai[i] + gammat[1] + 
       beta*treat[1,i] + lagTreOutc*treat.lagged[1,i] + beta_x*x[1,i] + beta_x2*x2[1,i] +
       eps[1,i]
@@ -60,7 +60,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
       treat.error <- rnorm(1,-4)
       prob <- exp(rho_t_1*y[t-1,i] + alphai[i] + rho_tt_1*treat[t-1,i] + rho_x*x[t,i] + rho_x2*x2[t,i] +gammat[t] + treat.error)/
         (1+exp(rho_t_1*y[t-1,i] + alphai[i] + rho_tt_1*treat[t-1,i] + rho_x*x[t,i] + rho_x2*x2[t,i] + gammat[t] + treat.error))
-      treat[t,i] <- rbinom(1,1, 1-prob)
+      treat[t,i] <- rbinom(1,1, prob)
       treat.lagged[t,i] <- treat[t-1,i]
       
       if(hetereo == T) {
@@ -130,8 +130,8 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
 
 ## FEs ##
 set.seed(123)
-alphai <- rnorm(n = 100000, mean = 1, sd = 1)
-gammat <- rnorm(n = 100000, mean = 1, sd = 1)
+alphai <- rnorm(n = 100000, mean = 0, sd = 1)
+gammat <- rnorm(n = 100000, mean = 0, sd = .5)
 
 # rho_t_1 = .8; rho_1 = .8
 reps <- 3000
@@ -139,306 +139,9 @@ reps <- 3000
 ### hetereo ###
 cat("Now we are doing New_N50_ephi0.5_T10_hetereo \n")
 
-
-
-# ## T = 5
-# small_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 50, Time = 5, ephi = 0, 
-#                   
-#                     hetereo = F)
-#   list(out)
-# })
-# save(small_N50, file = "small_N50")
-# 
-# 
-# small_N100 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 100, Time = 5, ephi = 0, 
-#                   
-#                   
-#                     hetereo = F)
-#   list(out)
-# })
-# save(small_N100, file = "small_N100")
-# 
-# 
-# small_N200 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 200, Time = 5,
-#                   
-#                   
-#                   ephi = 0,   hetereo = F)
-#   list(out)
-# })
-# save(small_N200, file = "small_N200")
-# 
-# small_N500 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 500, Time = 5, ephi = 0, 
-#                   
-#                   
-#                     hetereo = F)
-#   list(out)
-# })
-# save(small_N500, file = "small_N500")
-# 
-# small_N1000 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 1000, Time = 5, ephi = 0,  
-#                   
-#                   
-#                   hetereo = F)
-#   list(out)
-# })
-# save(small_N1000, file = "small_N1000")
-# 
-# ## T = 10
-# small_T10_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 50, Time = 10, ephi = 0, 
-#                   
-#                     hetereo = F)
-#   list(out)
-# })
-# save(small_T10_N50, file = "small_T10_N50")
-# 
-# small_T10_N100 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 100, Time = 10, ephi = 0, 
-#                   
-#                   
-#                     hetereo = F)
-#   list(out)
-# })
-# save(small_T10_N100, file = "small_T10_N100")
-# 
-# 
-# small_T10_N200 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 200, Time = 10,
-#                   
-#                   
-#                   ephi = 0,   hetereo = F)
-#   list(out)
-# })
-# save(small_T10_N200, file = "small_T10_N200")
-# 
-# 
-# 
-# small_T10_N500 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 500, Time = 10, ephi = 0, 
-#                   
-#                   
-#                     hetereo = F)
-#   list(out)
-# })
-# save(small_T10_N500, file = "small_T10_N500")
-# 
-# 
-# small_T10_N1000 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 1000, Time = 10, ephi = 0,  
-#                   
-#                   
-#                   hetereo = F)
-#   list(out)
-# })
-# save(small_T10_N1000, file = "small_T10_N1000")
-# 
-# ### T = 20 ### 
-# small_T20_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 50, Time = 20, ephi = 0, 
-#                   
-#                     hetereo = F)
-#   list(out)
-# })
-# save(small_T20_N50, file = "small_T20_N50")
-# 
-# small_T20_N100 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 100, Time = 20, ephi = 0, 
-#                   
-#                   
-#                     hetereo = F)
-#   list(out)
-# })
-# save(small_T20_N100, file = "small_T20_N100")
-# 
-# 
-# small_T20_N200 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 200, Time = 20,
-#                   
-#                   
-#                   ephi = 0,   hetereo = F)
-#   list(out)
-# })
-# save(small_T20_N200, file = "small_T20_N200")
-# 
-# 
-# 
-# small_T20_N500 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 500, Time = 20, ephi = 0, 
-#                   
-#                   
-#                     hetereo = F)
-#   list(out)
-# })
-# save(small_T20_N500, file = "small_T20_N500")
-# 
-# 
-# small_T20_N1000 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 1000, Time = 20, ephi = 0,  
-#                   
-#                   
-#                   hetereo = F)
-#   list(out)
-# })
-# save(small_T20_N1000, file = "small_T20_N1000")
-# 
-# ### T = 30 ### 
-# small_T30_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 50, Time = 30, ephi = 0, 
-#                   
-#                     hetereo = F)
-#   list(out)
-# })
-# save(small_T30_N50, file = "small_T30_N50")
-# 
-# small_T30_N100 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 100, Time = 30, ephi = 0, 
-#                   
-#                   
-#                     hetereo = F)
-#   list(out)
-# })
-# save(small_T30_N100, file = "small_T30_N100")
-# 
-# 
-# small_T30_N200 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 200, Time = 30,
-#                   
-#                   
-#                   ephi = 0,   hetereo = F)
-#   list(out)
-# })
-# save(small_T30_N200, file = "small_T30_N200")
-# 
-# 
-# 
-# small_T30_N500 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 500, Time = 30, ephi = 0, 
-#                   
-#                   
-#                     hetereo = F)
-#   list(out)
-# })
-# save(small_T30_N500, file = "small_T30_N500")
-# 
-# 
-# small_T30_N1000 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 1000, Time = 30, ephi = 0,  
-#                   
-#                   
-#                   hetereo = F)
-#   list(out)
-# })
-# save(small_T30_N1000, file = "small_T30_N1000")
-# 
-# ### T = 50 ### 
-# small_T50_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 50, Time = 50, ephi = 0, 
-#                   
-#                     hetereo = F)
-#   list(out)
-# })
-# save(small_T50_N50, file = "small_T50_N50")
-# 
-# small_T50_N100 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 100, Time = 50, ephi = 0, 
-#                   
-#                   
-#                     hetereo = F)
-#   list(out)
-# })
-# save(small_T50_N100, file = "small_T50_N100")
-# 
-# 
-# small_T50_N200 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 200, Time = 50,
-#                   
-#                   
-#                   ephi = 0,   hetereo = F)
-#   list(out)
-# })
-# save(small_T50_N200, file = "small_T50_N200")
-# 
-# 
-# 
-# small_T50_N500 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 500, Time = 50, ephi = 0, 
-#                   
-#                   
-#                     hetereo = F)
-#   list(out)
-# })
-# save(small_T50_N500, file = "small_T50_N500")
-# 
-# 
-# small_T50_N1000 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 1000, Time = 50, ephi = 0,  
-#                   
-#                   
-#                   hetereo = F)
-#   list(out)
-# })
-# save(small_T50_N1000, file = "small_T50_N1000")
-# 
-# ### T = 50 ### 
-# small_T100_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 50, Time = 100, ephi = 0, 
-#                   
-#                     hetereo = F)
-#   list(out)
-# })
-# save(small_T100_N50, file = "small_T100_N50")
-# 
-# small_T100_N100 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 100, Time = 100, ephi = 0, 
-#                   
-#                   
-#                     hetereo = F)
-#   list(out)
-# })
-# save(small_T100_N100, file = "small_T100_N100")
-# 
-# 
-# small_T100_N200 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 200, Time = 100,
-#                   
-#                   
-#                   ephi = 0,   hetereo = F)
-#   list(out)
-# })
-# save(small_T100_N200, file = "small_T100_N200")
-# 
-# 
-# 
-# small_T100_N500 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 500, Time = 100, ephi = 0, 
-#                   
-#                   
-#                     hetereo = F)
-#   list(out)
-# })
-# save(small_T100_N500, file = "small_T100_N500")
-# 
-# 
-# small_T100_N1000 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-#   out <- sim_wfe2(N = 1000, Time = 100, ephi = 0,  
-#                   
-#                   
-#                   hetereo = F)
-#   list(out)
-# })
-# save(small_T100_N1000, file = "small_T100_N1000")
-# 
-# 
-
-
 ## T = 5
 small_rho6_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 50, Time = 5, ephi = 0, rho_1 = 0.6, 
+  out <- sim_wfe2(N = 50, Time = 5, ephi = 0, rho_1 = .6, rho_t_1 = .6, 
                   
                   hetereo = F)
   list(out)
@@ -447,7 +150,7 @@ save(small_rho6_N50, file = "small_rho6_N50")
 
 
 small_rho6_N100 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 100, Time = 5, ephi = 0, rho_1 = 0.6, 
+  out <- sim_wfe2(N = 100, Time = 5, ephi = 0, rho_1 = .6, rho_t_1 = .6, 
                   
                   
                   hetereo = F)
@@ -460,13 +163,13 @@ small_rho6_N200 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
   out <- sim_wfe2(N = 200, Time = 5,
                   
                   
-                  ephi = 0, rho_1 = 0.6,   hetereo = F)
+                  ephi = 0, rho_1 = .6, rho_t_1 = .6,   hetereo = F)
   list(out)
 })
 save(small_rho6_N200, file = "small_rho6_N200")
 
 small_rho6_N500 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 500, Time = 5, ephi = 0, rho_1 = 0.6, 
+  out <- sim_wfe2(N = 500, Time = 5, ephi = 0, rho_1 = .6, rho_t_1 = .6, 
                   
                   
                   hetereo = F)
@@ -475,7 +178,7 @@ small_rho6_N500 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
 save(small_rho6_N500, file = "small_rho6_N500")
 
 small_rho6_N1000 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 1000, Time = 5, ephi = 0, rho_1 = 0.6,  
+  out <- sim_wfe2(N = 1000, Time = 5, ephi = 0, rho_1 = .6, rho_t_1 = .6,  
                   
                   
                   hetereo = F)
@@ -485,7 +188,7 @@ save(small_rho6_N1000, file = "small_rho6_N1000")
 
 ## T = 10
 small_rho6_T10_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 50, Time = 10, ephi = 0, rho_1 = 0.6, 
+  out <- sim_wfe2(N = 50, Time = 10, ephi = 0, rho_1 = .6, rho_t_1 = .6, 
                   
                   hetereo = F)
   list(out)
@@ -493,7 +196,7 @@ small_rho6_T10_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
 save(small_rho6_T10_N50, file = "small_rho6_T10_N50")
 
 small_rho6_T10_N100 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 100, Time = 10, ephi = 0, rho_1 = 0.6, 
+  out <- sim_wfe2(N = 100, Time = 10, ephi = 0, rho_1 = .6, rho_t_1 = .6, 
                   
                   
                   hetereo = F)
@@ -506,7 +209,7 @@ small_rho6_T10_N200 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
   out <- sim_wfe2(N = 200, Time = 10,
                   
                   
-                  ephi = 0, rho_1 = 0.6,   hetereo = F)
+                  ephi = 0, rho_1 = .6, rho_t_1 = .6,   hetereo = F)
   list(out)
 })
 save(small_rho6_T10_N200, file = "small_rho6_T10_N200")
@@ -514,7 +217,7 @@ save(small_rho6_T10_N200, file = "small_rho6_T10_N200")
 
 
 small_rho6_T10_N500 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 500, Time = 10, ephi = 0, rho_1 = 0.6, 
+  out <- sim_wfe2(N = 500, Time = 10, ephi = 0, rho_1 = .6, rho_t_1 = .6, 
                   
                   
                   hetereo = F)
@@ -524,7 +227,7 @@ save(small_rho6_T10_N500, file = "small_rho6_T10_N500")
 
 
 small_rho6_T10_N1000 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 1000, Time = 10, ephi = 0, rho_1 = 0.6,  
+  out <- sim_wfe2(N = 1000, Time = 10, ephi = 0, rho_1 = .6, rho_t_1 = .6,  
                   
                   
                   hetereo = F)
@@ -534,7 +237,7 @@ save(small_rho6_T10_N1000, file = "small_rho6_T10_N1000")
 
 ### T = 20 ### 
 small_rho6_T20_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 50, Time = 20, ephi = 0, rho_1 = 0.6, 
+  out <- sim_wfe2(N = 50, Time = 20, ephi = 0, rho_1 = .6, rho_t_1 = .6, 
                   
                   hetereo = F)
   list(out)
@@ -542,7 +245,7 @@ small_rho6_T20_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
 save(small_rho6_T20_N50, file = "small_rho6_T20_N50")
 
 small_rho6_T20_N100 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 100, Time = 20, ephi = 0, rho_1 = 0.6, 
+  out <- sim_wfe2(N = 100, Time = 20, ephi = 0, rho_1 = .6, rho_t_1 = .6, 
                   
                   
                   hetereo = F)
@@ -555,7 +258,7 @@ small_rho6_T20_N200 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
   out <- sim_wfe2(N = 200, Time = 20,
                   
                   
-                  ephi = 0, rho_1 = 0.6,   hetereo = F)
+                  ephi = 0, rho_1 = .6, rho_t_1 = .6,   hetereo = F)
   list(out)
 })
 save(small_rho6_T20_N200, file = "small_rho6_T20_N200")
@@ -563,7 +266,7 @@ save(small_rho6_T20_N200, file = "small_rho6_T20_N200")
 
 
 small_rho6_T20_N500 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 500, Time = 20, ephi = 0, rho_1 = 0.6, 
+  out <- sim_wfe2(N = 500, Time = 20, ephi = 0, rho_1 = .6, rho_t_1 = .6, 
                   
                   
                   hetereo = F)
@@ -573,7 +276,7 @@ save(small_rho6_T20_N500, file = "small_rho6_T20_N500")
 
 
 small_rho6_T20_N1000 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 1000, Time = 20, ephi = 0, rho_1 = 0.6,  
+  out <- sim_wfe2(N = 1000, Time = 20, ephi = 0, rho_1 = .6, rho_t_1 = .6,  
                   
                   
                   hetereo = F)
@@ -583,7 +286,7 @@ save(small_rho6_T20_N1000, file = "small_rho6_T20_N1000")
 
 ### T = 30 ### 
 small_rho6_T30_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 50, Time = 30, ephi = 0, rho_1 = 0.6, 
+  out <- sim_wfe2(N = 50, Time = 30, ephi = 0, rho_1 = .6, rho_t_1 = .6, 
                   
                   hetereo = F)
   list(out)
@@ -591,7 +294,7 @@ small_rho6_T30_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
 save(small_rho6_T30_N50, file = "small_rho6_T30_N50")
 
 small_rho6_T30_N100 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 100, Time = 30, ephi = 0, rho_1 = 0.6, 
+  out <- sim_wfe2(N = 100, Time = 30, ephi = 0, rho_1 = .6, rho_t_1 = .6, 
                   
                   
                   hetereo = F)
@@ -604,7 +307,7 @@ small_rho6_T30_N200 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
   out <- sim_wfe2(N = 200, Time = 30,
                   
                   
-                  ephi = 0, rho_1 = 0.6,   hetereo = F)
+                  ephi = 0, rho_1 = .6, rho_t_1 = .6,   hetereo = F)
   list(out)
 })
 save(small_rho6_T30_N200, file = "small_rho6_T30_N200")
@@ -612,7 +315,7 @@ save(small_rho6_T30_N200, file = "small_rho6_T30_N200")
 
 
 small_rho6_T30_N500 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 500, Time = 30, ephi = 0, rho_1 = 0.6, 
+  out <- sim_wfe2(N = 500, Time = 30, ephi = 0, rho_1 = .6, rho_t_1 = .6, 
                   
                   
                   hetereo = F)
@@ -622,7 +325,7 @@ save(small_rho6_T30_N500, file = "small_rho6_T30_N500")
 
 
 small_rho6_T30_N1000 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 1000, Time = 30, ephi = 0, rho_1 = 0.6,  
+  out <- sim_wfe2(N = 1000, Time = 30, ephi = 0, rho_1 = .6, rho_t_1 = .6,  
                   
                   
                   hetereo = F)
@@ -632,7 +335,7 @@ save(small_rho6_T30_N1000, file = "small_rho6_T30_N1000")
 
 ### T = 50 ### 
 small_rho6_T50_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 50, Time = 50, ephi = 0, rho_1 = 0.6, 
+  out <- sim_wfe2(N = 50, Time = 50, ephi = 0, rho_1 = .6, rho_t_1 = .6, 
                   
                   hetereo = F)
   list(out)
@@ -640,7 +343,7 @@ small_rho6_T50_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
 save(small_rho6_T50_N50, file = "small_rho6_T50_N50")
 
 small_rho6_T50_N100 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 100, Time = 50, ephi = 0, rho_1 = 0.6, 
+  out <- sim_wfe2(N = 100, Time = 50, ephi = 0, rho_1 = .6, rho_t_1 = .6, 
                   
                   
                   hetereo = F)
@@ -653,7 +356,7 @@ small_rho6_T50_N200 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
   out <- sim_wfe2(N = 200, Time = 50,
                   
                   
-                  ephi = 0, rho_1 = 0.6,   hetereo = F)
+                  ephi = 0, rho_1 = .6, rho_t_1 = .6,   hetereo = F)
   list(out)
 })
 save(small_rho6_T50_N200, file = "small_rho6_T50_N200")
@@ -661,7 +364,7 @@ save(small_rho6_T50_N200, file = "small_rho6_T50_N200")
 
 
 small_rho6_T50_N500 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 500, Time = 50, ephi = 0, rho_1 = 0.6, 
+  out <- sim_wfe2(N = 500, Time = 50, ephi = 0, rho_1 = .6, rho_t_1 = .6, 
                   
                   
                   hetereo = F)
@@ -671,7 +374,7 @@ save(small_rho6_T50_N500, file = "small_rho6_T50_N500")
 
 
 small_rho6_T50_N1000 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 1000, Time = 50, ephi = 0, rho_1 = 0.6,  
+  out <- sim_wfe2(N = 1000, Time = 50, ephi = 0, rho_1 = .6, rho_t_1 = .6,  
                   
                   
                   hetereo = F)
@@ -681,7 +384,7 @@ save(small_rho6_T50_N1000, file = "small_rho6_T50_N1000")
 
 ### T = 50 ### 
 small_rho6_T100_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 50, Time = 100, ephi = 0, rho_1 = 0.6, 
+  out <- sim_wfe2(N = 50, Time = 100, ephi = 0, rho_1 = .6, rho_t_1 = .6, 
                   
                   hetereo = F)
   list(out)
@@ -689,7 +392,7 @@ small_rho6_T100_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
 save(small_rho6_T100_N50, file = "small_rho6_T100_N50")
 
 small_rho6_T100_N100 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 100, Time = 100, ephi = 0, rho_1 = 0.6, 
+  out <- sim_wfe2(N = 100, Time = 100, ephi = 0, rho_1 = .6, rho_t_1 = .6, 
                   
                   
                   hetereo = F)
@@ -702,7 +405,7 @@ small_rho6_T100_N200 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
   out <- sim_wfe2(N = 200, Time = 100,
                   
                   
-                  ephi = 0, rho_1 = 0.6,   hetereo = F)
+                  ephi = 0, rho_1 = .6, rho_t_1 = .6,   hetereo = F)
   list(out)
 })
 save(small_rho6_T100_N200, file = "small_rho6_T100_N200")
@@ -710,7 +413,7 @@ save(small_rho6_T100_N200, file = "small_rho6_T100_N200")
 
 
 small_rho6_T100_N500 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 500, Time = 100, ephi = 0, rho_1 = 0.6, 
+  out <- sim_wfe2(N = 500, Time = 100, ephi = 0, rho_1 = .6, rho_t_1 = .6, 
                   
                   
                   hetereo = F)
@@ -720,13 +423,308 @@ save(small_rho6_T100_N500, file = "small_rho6_T100_N500")
 
 
 small_rho6_T100_N1000 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 1000, Time = 100, ephi = 0, rho_1 = 0.6,  
+  out <- sim_wfe2(N = 1000, Time = 100, ephi = 0, rho_1 = .6, rho_t_1 = .6,  
                   
                   
                   hetereo = F)
   list(out)
 })
 save(small_rho6_T100_N1000, file = "small_rho6_T100_N1000")
+
+
+## T = 5
+small_rho8_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 50, Time = 5, ephi = 0, rho_1 = .8, rho_t_1 = .8, 
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_N50, file = "small_rho8_N50")
+
+
+small_rho8_N100 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 100, Time = 5, ephi = 0, rho_1 = .8, rho_t_1 = .8, 
+                  
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_N100, file = "small_rho8_N100")
+
+
+small_rho8_N200 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 200, Time = 5,
+                  
+                  
+                  ephi = 0, rho_1 = .8, rho_t_1 = .8,   hetereo = F)
+  list(out)
+})
+save(small_rho8_N200, file = "small_rho8_N200")
+
+small_rho8_N500 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 500, Time = 5, ephi = 0, rho_1 = .8, rho_t_1 = .8, 
+                  
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_N500, file = "small_rho8_N500")
+
+small_rho8_N1000 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 1000, Time = 5, ephi = 0, rho_1 = .8, rho_t_1 = .8,  
+                  
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_N1000, file = "small_rho8_N1000")
+
+## T = 10
+small_rho8_T10_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 50, Time = 10, ephi = 0, rho_1 = .8, rho_t_1 = .8, 
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_T10_N50, file = "small_rho8_T10_N50")
+
+small_rho8_T10_N100 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 100, Time = 10, ephi = 0, rho_1 = .8, rho_t_1 = .8, 
+                  
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_T10_N100, file = "small_rho8_T10_N100")
+
+
+small_rho8_T10_N200 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 200, Time = 10,
+                  
+                  
+                  ephi = 0, rho_1 = .8, rho_t_1 = .8,   hetereo = F)
+  list(out)
+})
+save(small_rho8_T10_N200, file = "small_rho8_T10_N200")
+
+
+
+small_rho8_T10_N500 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 500, Time = 10, ephi = 0, rho_1 = .8, rho_t_1 = .8, 
+                  
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_T10_N500, file = "small_rho8_T10_N500")
+
+
+small_rho8_T10_N1000 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 1000, Time = 10, ephi = 0, rho_1 = .8, rho_t_1 = .8,  
+                  
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_T10_N1000, file = "small_rho8_T10_N1000")
+
+### T = 20 ### 
+small_rho8_T20_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 50, Time = 20, ephi = 0, rho_1 = .8, rho_t_1 = .8, 
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_T20_N50, file = "small_rho8_T20_N50")
+
+small_rho8_T20_N100 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 100, Time = 20, ephi = 0, rho_1 = .8, rho_t_1 = .8, 
+                  
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_T20_N100, file = "small_rho8_T20_N100")
+
+
+small_rho8_T20_N200 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 200, Time = 20,
+                  
+                  
+                  ephi = 0, rho_1 = .8, rho_t_1 = .8,   hetereo = F)
+  list(out)
+})
+save(small_rho8_T20_N200, file = "small_rho8_T20_N200")
+
+
+
+small_rho8_T20_N500 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 500, Time = 20, ephi = 0, rho_1 = .8, rho_t_1 = .8, 
+                  
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_T20_N500, file = "small_rho8_T20_N500")
+
+
+small_rho8_T20_N1000 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 1000, Time = 20, ephi = 0, rho_1 = .8, rho_t_1 = .8,  
+                  
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_T20_N1000, file = "small_rho8_T20_N1000")
+
+### T = 30 ### 
+small_rho8_T30_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 50, Time = 30, ephi = 0, rho_1 = .8, rho_t_1 = .8, 
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_T30_N50, file = "small_rho8_T30_N50")
+
+small_rho8_T30_N100 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 100, Time = 30, ephi = 0, rho_1 = .8, rho_t_1 = .8, 
+                  
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_T30_N100, file = "small_rho8_T30_N100")
+
+
+small_rho8_T30_N200 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 200, Time = 30,
+                  
+                  
+                  ephi = 0, rho_1 = .8, rho_t_1 = .8,   hetereo = F)
+  list(out)
+})
+save(small_rho8_T30_N200, file = "small_rho8_T30_N200")
+
+
+
+small_rho8_T30_N500 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 500, Time = 30, ephi = 0, rho_1 = .8, rho_t_1 = .8, 
+                  
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_T30_N500, file = "small_rho8_T30_N500")
+
+
+small_rho8_T30_N1000 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 1000, Time = 30, ephi = 0, rho_1 = .8, rho_t_1 = .8,  
+                  
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_T30_N1000, file = "small_rho8_T30_N1000")
+
+### T = 50 ### 
+small_rho8_T50_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 50, Time = 50, ephi = 0, rho_1 = .8, rho_t_1 = .8, 
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_T50_N50, file = "small_rho8_T50_N50")
+
+small_rho8_T50_N100 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 100, Time = 50, ephi = 0, rho_1 = .8, rho_t_1 = .8, 
+                  
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_T50_N100, file = "small_rho8_T50_N100")
+
+
+small_rho8_T50_N200 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 200, Time = 50,
+                  
+                  
+                  ephi = 0, rho_1 = .8, rho_t_1 = .8,   hetereo = F)
+  list(out)
+})
+save(small_rho8_T50_N200, file = "small_rho8_T50_N200")
+
+
+
+small_rho8_T50_N500 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 500, Time = 50, ephi = 0, rho_1 = .8, rho_t_1 = .8, 
+                  
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_T50_N500, file = "small_rho8_T50_N500")
+
+
+small_rho8_T50_N1000 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 1000, Time = 50, ephi = 0, rho_1 = .8, rho_t_1 = .8,  
+                  
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_T50_N1000, file = "small_rho8_T50_N1000")
+
+### T = 50 ### 
+small_rho8_T100_N50 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 50, Time = 100, ephi = 0, rho_1 = .8, rho_t_1 = .8, 
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_T100_N50, file = "small_rho8_T100_N50")
+
+small_rho8_T100_N100 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 100, Time = 100, ephi = 0, rho_1 = .8, rho_t_1 = .8, 
+                  
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_T100_N100, file = "small_rho8_T100_N100")
+
+
+small_rho8_T100_N200 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 200, Time = 100,
+                  
+                  
+                  ephi = 0, rho_1 = .8, rho_t_1 = .8,   hetereo = F)
+  list(out)
+})
+save(small_rho8_T100_N200, file = "small_rho8_T100_N200")
+
+
+
+small_rho8_T100_N500 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 500, Time = 100, ephi = 0, rho_1 = .8, rho_t_1 = .8, 
+                  
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_T100_N500, file = "small_rho8_T100_N500")
+
+
+small_rho8_T100_N1000 <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 1000, Time = 100, ephi = 0, rho_1 = .8, rho_t_1 = .8,  
+                  
+                  
+                  hetereo = F)
+  list(out)
+})
+save(small_rho8_T100_N1000, file = "small_rho8_T100_N1000")
+
+
 
 
 
