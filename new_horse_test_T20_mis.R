@@ -13,7 +13,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
                       rho_1 = .4, rho_t_1 = .4, rho_tt_1 = .4, 
                       rho_x = .4, rho_x2 = 0, lagTreOutc = .4, 
                       beta = 1, beta_x = .2, beta_x2 = 0, 
-                      phi = .75, rho_t_2 = .3, ephi = .5,
+                      phi = .75, rho_t_2 = .3, ephi = 0,
                       rho_2 = .3, M = 1, hetereo = T,
                       ITER = 10) {
   y <- matrix(NA, ncol = N, nrow = Time)
@@ -50,10 +50,10 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
     prob <- exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1] + treat.error)/
       (1+exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1] + treat.error))
     treat[1,i] <- rbinom(1,1, prob)
-    if (hetereo == F) {
-      eps[1, i] <- rnorm(1, 0, 2)
-    } else {
+    if (hetereo == T) {
       eps[1, i] <- rnorm(1, 0, runif(1, 1, 3))
+    } else {
+      eps[1, i] <- rnorm(1, 0, 2)
     }
     
     y[1,i] <-  rho_1*y.lagged[1,i] + alphai[i] + gammat[1] + 
@@ -71,7 +71,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
       if(hetereo == T) {
         eps[t, i] <- ephi*eps[t-1, i] + rnorm(n = 1, mean = 0, sd = runif(1, 1, 3))
       } else {
-        eps[t, i] <- ephi*eps[t-1, i] + rnorm(n = 1, mean = 0, sd = 1)
+        eps[t, i] <- ephi*eps[t-1, i] + rnorm(n = 1, mean = 0, sd = 2)
       }
       
       # truth:

@@ -1,5 +1,496 @@
 library(ggplot2)
 setwd("~/Dropbox/w2fe/Simulations/results")
+load("New_N200_T20_homo")
+load("New_N100_T20_homo")
+load("New_N50_T20_homo")
+load("New_N50_T10_homo")
+load("New_N100_T10_homo")
+load("New_N200_T10_homo")
+load("New_N300_T10_homo")
+
+load("New_N200_T20_homo_mis")
+load("New_N100_T20_homo_mis")
+load("New_N50_T20_homo_mis")
+load("New_N50_T10_homo_mis")
+load("New_N100_T10_homo_mis")
+load("New_N200_T10_homo_mis")
+load("New_N300_T10_homo_mis")
+### homo ###
+## T = 10 ##
+### N = 50 ###
+Synth_wfe_lag.one_coef_50 <- 1-mean(sapply(New_N50_T10_homo, function (x) x$Synth_wfe_lag.one_coef), na.rm = T)
+
+Pscore_wfe_lag.one_coef_50 <- 1-mean(sapply(New_N50_T10_homo, function (x) x$Pscore_wfe_lag.one_coef), na.rm = T)
+
+CBPS_wfe_lag.one_coef_50 <- 1-mean(sapply(New_N50_T10_homo, function (x) x$CBPS_wfe_lag.one_coef), na.rm = T)
+
+Maha_wfe_lag.one_coef_50 <- 1-mean(sapply(New_N50_T10_homo, function (x) x$Maha_wfe_lag.one_coef), na.rm = T)
+
+Synth_wfe_lag.two_coef_50 <- 1-mean(sapply(New_N50_T10_homo, function (x) x$Synth_wfe_lag.two_coef), na.rm = T)
+
+Pscore_wfe_lag.two_coef_50 <- 1-mean(sapply(New_N50_T10_homo, function (x) x$Pscore_wfe_lag.two_coef), na.rm = T)
+
+CBPS_wfe_lag.two_coef_50 <- 1-mean(sapply(New_N50_T10_homo, function (x) x$CBPS_wfe_lag.two_coef), na.rm = T)
+
+Maha_wfe_lag.two_coef_50 <- 1-mean(sapply(New_N50_T10_homo, function (x) x$Maha_wfe_lag.two_coef), na.rm = T)
+
+ols_coef_50 <- 1-mean(sapply(New_N50_T10_homo, function (x) x$ols_coef), na.rm = T)
+
+Synth_wfe_lag.one_coef_50
+Synth_wfe_lag.two_coef_50
+Pscore_wfe_lag.one_coef_50
+Pscore_wfe_lag.two_coef_50
+CBPS_wfe_lag.one_coef_50
+CBPS_wfe_lag.two_coef_50
+Maha_wfe_lag.one_coef_50
+Maha_wfe_lag.two_coef_50
+ols_coef_50
+
+
+### N = 100 ###
+Synth_wfe_lag.one_coef_100 <- 1-mean(sapply(New_N100_T10_homo, function (x) x$Synth_wfe_lag.one_coef), na.rm = T)
+
+Pscore_wfe_lag.one_coef_100 <- 1-mean(sapply(New_N100_T10_homo, function (x) x$Pscore_wfe_lag.one_coef), na.rm = T)
+
+CBPS_wfe_lag.one_coef_100 <- 1-mean(sapply(New_N100_T10_homo, function (x) x$CBPS_wfe_lag.one_coef), na.rm = T)
+
+Maha_wfe_lag.one_coef_100 <- 1-mean(sapply(New_N100_T10_homo, function (x) x$Maha_wfe_lag.one_coef), na.rm = T)
+
+Synth_wfe_lag.two_coef_100 <- 1-mean(sapply(New_N100_T10_homo, function (x) x$Synth_wfe_lag.two_coef), na.rm = T)
+
+Pscore_wfe_lag.two_coef_100 <- 1-mean(sapply(New_N100_T10_homo, function (x) x$Pscore_wfe_lag.two_coef), na.rm = T)
+
+CBPS_wfe_lag.two_coef_100 <- 1-mean(sapply(New_N100_T10_homo, function (x) x$CBPS_wfe_lag.two_coef), na.rm = T)
+
+Maha_wfe_lag.two_coef_100 <- 1-mean(sapply(New_N100_T10_homo, function (x) x$Maha_wfe_lag.two_coef), na.rm = T)
+
+ols_coef_100 <- 1-mean(sapply(New_N100_T10_homo, function (x) x$ols_coef), na.rm = T)
+
+Synth_wfe_lag.one_coef_100
+Synth_wfe_lag.two_coef_100
+Pscore_wfe_lag.one_coef_100
+Pscore_wfe_lag.two_coef_100
+CBPS_wfe_lag.one_coef_100
+CBPS_wfe_lag.two_coef_100
+Maha_wfe_lag.one_coef_100
+Maha_wfe_lag.two_coef_100
+ols_coef_100
+
+### N = 200 ###
+Synth_wfe_lag.one_coef_200 <- 1-mean(sapply(New_N200_T10_homo, function (x) x$Synth_wfe_lag.one_coef), na.rm = T)
+
+Pscore_wfe_lag.one_coef_200 <- 1-mean(sapply(New_N200_T10_homo, function (x) x$Pscore_wfe_lag.one_coef), na.rm = T)
+
+CBPS_wfe_lag.one_coef_200 <- 1-mean(sapply(New_N200_T10_homo, function (x) x$CBPS_wfe_lag.one_coef), na.rm = T)
+
+Maha_wfe_lag.one_coef_200 <- 1-mean(sapply(New_N200_T10_homo, function (x) x$Maha_wfe_lag.one_coef), na.rm = T)
+
+Synth_wfe_lag.two_coef_200 <- 1-mean(sapply(New_N200_T10_homo, function (x) x$Synth_wfe_lag.two_coef), na.rm = T)
+
+Pscore_wfe_lag.two_coef_200 <- 1-mean(sapply(New_N200_T10_homo, function (x) x$Pscore_wfe_lag.two_coef), na.rm = T)
+
+CBPS_wfe_lag.two_coef_200 <- 1-mean(sapply(New_N200_T10_homo, function (x) x$CBPS_wfe_lag.two_coef), na.rm = T)
+
+Maha_wfe_lag.two_coef_200 <- 1-mean(sapply(New_N200_T10_homo, function (x) x$Maha_wfe_lag.two_coef), na.rm = T)
+
+ols_coef_200 <- 1-mean(sapply(New_N200_T10_homo, function (x) x$ols_coef), na.rm = T)
+
+Synth_wfe_lag.one_coef_200
+Synth_wfe_lag.two_coef_200
+Pscore_wfe_lag.one_coef_200
+Pscore_wfe_lag.two_coef_200
+CBPS_wfe_lag.one_coef_200
+CBPS_wfe_lag.two_coef_200
+Maha_wfe_lag.one_coef_200
+Maha_wfe_lag.two_coef_200
+ols_coef_200
+
+###### N = 300 ########
+Synth_wfe_lag.one_coef_300 <- 1-mean(sapply(New_N300_T10_homo, function (x) x$Synth_wfe_lag.one_coef), na.rm = T)
+
+Pscore_wfe_lag.one_coef_300 <- 1-mean(sapply(New_N300_T10_homo, function (x) x$Pscore_wfe_lag.one_coef), na.rm = T)
+
+CBPS_wfe_lag.one_coef_300 <- 1-mean(sapply(New_N300_T10_homo, function (x) x$CBPS_wfe_lag.one_coef), na.rm = T)
+
+Maha_wfe_lag.one_coef_300 <- 1-mean(sapply(New_N300_T10_homo, function (x) x$Maha_wfe_lag.one_coef), na.rm = T)
+
+Synth_wfe_lag.two_coef_300 <- 1-mean(sapply(New_N300_T10_homo, function (x) x$Synth_wfe_lag.two_coef), na.rm = T)
+
+Pscore_wfe_lag.two_coef_300 <- 1-mean(sapply(New_N300_T10_homo, function (x) x$Pscore_wfe_lag.two_coef), na.rm = T)
+
+CBPS_wfe_lag.two_coef_300 <- 1-mean(sapply(New_N300_T10_homo, function (x) x$CBPS_wfe_lag.two_coef), na.rm = T)
+
+Maha_wfe_lag.two_coef_300 <- 1-mean(sapply(New_N300_T10_homo, function (x) x$Maha_wfe_lag.two_coef), na.rm = T)
+
+ols_coef_300 <- 1-mean(sapply(New_N300_T10_homo, function (x) x$ols_coef), na.rm = T)
+
+Synth_wfe_lag.one_coef_300
+Synth_wfe_lag.two_coef_300
+Pscore_wfe_lag.one_coef_300
+Pscore_wfe_lag.two_coef_300
+CBPS_wfe_lag.one_coef_300
+CBPS_wfe_lag.two_coef_300
+Maha_wfe_lag.one_coef_300
+Maha_wfe_lag.two_coef_300
+ols_coef_300
+
+## T = 20 ##
+### N = 50 ###
+Synth_wfe_lag.one_coef_50 <- 1-mean(sapply(New_N50_T20_homo, function (x) x$Synth_wfe_lag.one_coef), na.rm = T)
+
+Pscore_wfe_lag.one_coef_50 <- 1-mean(sapply(New_N50_T20_homo, function (x) x$Pscore_wfe_lag.one_coef), na.rm = T)
+
+CBPS_wfe_lag.one_coef_50 <- 1-mean(sapply(New_N50_T20_homo, function (x) x$CBPS_wfe_lag.one_coef), na.rm = T)
+
+Maha_wfe_lag.one_coef_50 <- 1-mean(sapply(New_N50_T20_homo, function (x) x$Maha_wfe_lag.one_coef), na.rm = T)
+
+Synth_wfe_lag.two_coef_50 <- 1-mean(sapply(New_N50_T20_homo, function (x) x$Synth_wfe_lag.two_coef), na.rm = T)
+
+Pscore_wfe_lag.two_coef_50 <- 1-mean(sapply(New_N50_T20_homo, function (x) x$Pscore_wfe_lag.two_coef), na.rm = T)
+
+CBPS_wfe_lag.two_coef_50 <- 1-mean(sapply(New_N50_T20_homo, function (x) x$CBPS_wfe_lag.two_coef), na.rm = T)
+
+Maha_wfe_lag.two_coef_50 <- 1-mean(sapply(New_N50_T20_homo, function (x) x$Maha_wfe_lag.two_coef), na.rm = T)
+
+ols_coef_50 <- 1-mean(sapply(New_N50_T20_homo, function (x) x$ols_coef), na.rm = T)
+
+Synth_wfe_lag.one_coef_50
+Synth_wfe_lag.two_coef_50
+Pscore_wfe_lag.one_coef_50
+Pscore_wfe_lag.two_coef_50
+CBPS_wfe_lag.one_coef_50
+CBPS_wfe_lag.two_coef_50
+Maha_wfe_lag.one_coef_50
+Maha_wfe_lag.two_coef_50
+ols_coef_50
+
+
+### N = 100 ###
+Synth_wfe_lag.one_coef_100 <- 1-mean(sapply(New_N100_T20_homo, function (x) x$Synth_wfe_lag.one_coef), na.rm = T)
+
+Pscore_wfe_lag.one_coef_100 <- 1-mean(sapply(New_N100_T20_homo, function (x) x$Pscore_wfe_lag.one_coef), na.rm = T)
+
+CBPS_wfe_lag.one_coef_100 <- 1-mean(sapply(New_N100_T20_homo, function (x) x$CBPS_wfe_lag.one_coef), na.rm = T)
+
+Maha_wfe_lag.one_coef_100 <- 1-mean(sapply(New_N100_T20_homo, function (x) x$Maha_wfe_lag.one_coef), na.rm = T)
+
+Synth_wfe_lag.two_coef_100 <- 1-mean(sapply(New_N100_T20_homo, function (x) x$Synth_wfe_lag.two_coef), na.rm = T)
+
+Pscore_wfe_lag.two_coef_100 <- 1-mean(sapply(New_N100_T20_homo, function (x) x$Pscore_wfe_lag.two_coef), na.rm = T)
+
+CBPS_wfe_lag.two_coef_100 <- 1-mean(sapply(New_N100_T20_homo, function (x) x$CBPS_wfe_lag.two_coef), na.rm = T)
+
+Maha_wfe_lag.two_coef_100 <- 1-mean(sapply(New_N100_T20_homo, function (x) x$Maha_wfe_lag.two_coef), na.rm = T)
+
+ols_coef_100 <- 1-mean(sapply(New_N100_T20_homo, function (x) x$ols_coef), na.rm = T)
+
+Synth_wfe_lag.one_coef_100
+Synth_wfe_lag.two_coef_100
+Pscore_wfe_lag.one_coef_100
+Pscore_wfe_lag.two_coef_100
+CBPS_wfe_lag.one_coef_100
+CBPS_wfe_lag.two_coef_100
+Maha_wfe_lag.one_coef_100
+Maha_wfe_lag.two_coef_100
+ols_coef_100
+
+### N = 200 ###
+Synth_wfe_lag.one_coef_200 <- 1-mean(sapply(New_N200_T20_homo, function (x) x$Synth_wfe_lag.one_coef), na.rm = T)
+
+Pscore_wfe_lag.one_coef_200 <- 1-mean(sapply(New_N200_T20_homo, function (x) x$Pscore_wfe_lag.one_coef), na.rm = T)
+
+CBPS_wfe_lag.one_coef_200 <- 1-mean(sapply(New_N200_T20_homo, function (x) x$CBPS_wfe_lag.one_coef), na.rm = T)
+
+Maha_wfe_lag.one_coef_200 <- 1-mean(sapply(New_N200_T20_homo, function (x) x$Maha_wfe_lag.one_coef), na.rm = T)
+
+Synth_wfe_lag.two_coef_200 <- 1-mean(sapply(New_N200_T20_homo, function (x) x$Synth_wfe_lag.two_coef), na.rm = T)
+
+Pscore_wfe_lag.two_coef_200 <- 1-mean(sapply(New_N200_T20_homo, function (x) x$Pscore_wfe_lag.two_coef), na.rm = T)
+
+CBPS_wfe_lag.two_coef_200 <- 1-mean(sapply(New_N200_T20_homo, function (x) x$CBPS_wfe_lag.two_coef), na.rm = T)
+
+Maha_wfe_lag.two_coef_200 <- 1-mean(sapply(New_N200_T20_homo, function (x) x$Maha_wfe_lag.two_coef), na.rm = T)
+
+ols_coef_200 <- 1-mean(sapply(New_N200_T20_homo, function (x) x$ols_coef), na.rm = T)
+
+Synth_wfe_lag.one_coef_200
+Synth_wfe_lag.two_coef_200
+Pscore_wfe_lag.one_coef_200
+Pscore_wfe_lag.two_coef_200
+CBPS_wfe_lag.one_coef_200
+CBPS_wfe_lag.two_coef_200
+Maha_wfe_lag.one_coef_200
+Maha_wfe_lag.two_coef_200
+ols_coef_200
+
+###### N = 300 ########
+Synth_wfe_lag.one_coef_300 <- 1-mean(sapply(New_N300_T20_homo, function (x) x$Synth_wfe_lag.one_coef), na.rm = T)
+
+Pscore_wfe_lag.one_coef_300 <- 1-mean(sapply(New_N300_T20_homo, function (x) x$Pscore_wfe_lag.one_coef), na.rm = T)
+
+CBPS_wfe_lag.one_coef_300 <- 1-mean(sapply(New_N300_T20_homo, function (x) x$CBPS_wfe_lag.one_coef), na.rm = T)
+
+Maha_wfe_lag.one_coef_300 <- 1-mean(sapply(New_N300_T20_homo, function (x) x$Maha_wfe_lag.one_coef), na.rm = T)
+
+Synth_wfe_lag.two_coef_300 <- 1-mean(sapply(New_N300_T20_homo, function (x) x$Synth_wfe_lag.two_coef), na.rm = T)
+
+Pscore_wfe_lag.two_coef_300 <- 1-mean(sapply(New_N300_T20_homo, function (x) x$Pscore_wfe_lag.two_coef), na.rm = T)
+
+CBPS_wfe_lag.two_coef_300 <- 1-mean(sapply(New_N300_T20_homo, function (x) x$CBPS_wfe_lag.two_coef), na.rm = T)
+
+Maha_wfe_lag.two_coef_300 <- 1-mean(sapply(New_N300_T20_homo, function (x) x$Maha_wfe_lag.two_coef), na.rm = T)
+
+ols_coef_300 <- 1-mean(sapply(New_N300_T20_homo, function (x) x$ols_coef), na.rm = T)
+
+Synth_wfe_lag.one_coef_300
+Synth_wfe_lag.two_coef_300
+Pscore_wfe_lag.one_coef_300
+Pscore_wfe_lag.two_coef_300
+CBPS_wfe_lag.one_coef_300
+CBPS_wfe_lag.two_coef_300
+Maha_wfe_lag.one_coef_300
+Maha_wfe_lag.two_coef_300
+ols_coef_300
+###############
+# Mis Homo #
+## T = 10 ##
+### N = 50 ###
+Synth_wfe_mis_lag.one_coef_50 <- 1-mean(sapply(New_N50_T10_homo_mis, function (x) x$Synth_wfe_mis_lag.one_coef), na.rm = T)
+
+Pscore_wfe_mis_lag.one_coef_50 <- 1-mean(sapply(New_N50_T10_homo_mis, function (x) x$Pscore_wfe_mis_lag.one_coef), na.rm = T)
+
+CBPS_wfe_mis_lag.one_coef_50 <- 1-mean(sapply(New_N50_T10_homo_mis, function (x) x$CBPS_wfe_mis_lag.one_coef), na.rm = T)
+
+Maha_wfe_mis_lag.one_coef_50 <- 1-mean(sapply(New_N50_T10_homo_mis, function (x) x$Maha_wfe_mis_lag.one_coef), na.rm = T)
+
+Synth_wfe_mis_lag.two_coef_50 <- 1-mean(sapply(New_N50_T10_homo_mis, function (x) x$Synth_wfe_mis_lag.two_coef), na.rm = T)
+
+Pscore_wfe_mis_lag.two_coef_50 <- 1-mean(sapply(New_N50_T10_homo_mis, function (x) x$Pscore_wfe_mis_lag.two_coef), na.rm = T)
+
+CBPS_wfe_mis_lag.two_coef_50 <- 1-mean(sapply(New_N50_T10_homo_mis, function (x) x$CBPS_wfe_mis_lag.two_coef), na.rm = T)
+
+Maha_wfe_mis_lag.two_coef_50 <- 1-mean(sapply(New_N50_T10_homo_mis, function (x) x$Maha_wfe_mis_lag.two_coef), na.rm = T)
+
+ols_mis_coef_50 <- 1-mean(sapply(New_N50_T10_homo_mis, function (x) x$ols_mis_coef), na.rm = T)
+
+Synth_wfe_mis_lag.one_coef_50
+Synth_wfe_mis_lag.two_coef_50
+Pscore_wfe_mis_lag.one_coef_50
+Pscore_wfe_mis_lag.two_coef_50
+CBPS_wfe_mis_lag.one_coef_50
+CBPS_wfe_mis_lag.two_coef_50
+Maha_wfe_mis_lag.one_coef_50
+Maha_wfe_mis_lag.two_coef_50
+ols_mis_coef_50
+
+
+### N = 100 ###
+Synth_wfe_mis_lag.one_coef_100 <- 1-mean(sapply(New_N100_T10_homo_mis, function (x) x$Synth_wfe_mis_lag.one_coef), na.rm = T)
+
+Pscore_wfe_mis_lag.one_coef_100 <- 1-mean(sapply(New_N100_T10_homo_mis, function (x) x$Pscore_wfe_mis_lag.one_coef), na.rm = T)
+
+CBPS_wfe_mis_lag.one_coef_100 <- 1-mean(sapply(New_N100_T10_homo_mis, function (x) x$CBPS_wfe_mis_lag.one_coef), na.rm = T)
+
+Maha_wfe_mis_lag.one_coef_100 <- 1-mean(sapply(New_N100_T10_homo_mis, function (x) x$Maha_wfe_mis_lag.one_coef), na.rm = T)
+
+Synth_wfe_mis_lag.two_coef_100 <- 1-mean(sapply(New_N100_T10_homo_mis, function (x) x$Synth_wfe_mis_lag.two_coef), na.rm = T)
+
+Pscore_wfe_mis_lag.two_coef_100 <- 1-mean(sapply(New_N100_T10_homo_mis, function (x) x$Pscore_wfe_mis_lag.two_coef), na.rm = T)
+
+CBPS_wfe_mis_lag.two_coef_100 <- 1-mean(sapply(New_N100_T10_homo_mis, function (x) x$CBPS_wfe_mis_lag.two_coef), na.rm = T)
+
+Maha_wfe_mis_lag.two_coef_100 <- 1-mean(sapply(New_N100_T10_homo_mis, function (x) x$Maha_wfe_mis_lag.two_coef), na.rm = T)
+
+ols_mis_coef_100 <- 1-mean(sapply(New_N100_T10_homo_mis, function (x) x$ols_mis_coef), na.rm = T)
+
+Synth_wfe_mis_lag.one_coef_100
+Synth_wfe_mis_lag.two_coef_100
+Pscore_wfe_mis_lag.one_coef_100
+Pscore_wfe_mis_lag.two_coef_100
+CBPS_wfe_mis_lag.one_coef_100
+CBPS_wfe_mis_lag.two_coef_100
+Maha_wfe_mis_lag.one_coef_100
+Maha_wfe_mis_lag.two_coef_100
+ols_mis_coef_100
+
+### N = 200 ###
+Synth_wfe_mis_lag.one_coef_200 <- 1-mean(sapply(New_N200_T10_homo_mis, function (x) x$Synth_wfe_mis_lag.one_coef), na.rm = T)
+
+Pscore_wfe_mis_lag.one_coef_200 <- 1-mean(sapply(New_N200_T10_homo_mis, function (x) x$Pscore_wfe_mis_lag.one_coef), na.rm = T)
+
+CBPS_wfe_mis_lag.one_coef_200 <- 1-mean(sapply(New_N200_T10_homo_mis, function (x) x$CBPS_wfe_mis_lag.one_coef), na.rm = T)
+
+Maha_wfe_mis_lag.one_coef_200 <- 1-mean(sapply(New_N200_T10_homo_mis, function (x) x$Maha_wfe_mis_lag.one_coef), na.rm = T)
+
+Synth_wfe_mis_lag.two_coef_200 <- 1-mean(sapply(New_N200_T10_homo_mis, function (x) x$Synth_wfe_mis_lag.two_coef), na.rm = T)
+
+Pscore_wfe_mis_lag.two_coef_200 <- 1-mean(sapply(New_N200_T10_homo_mis, function (x) x$Pscore_wfe_mis_lag.two_coef), na.rm = T)
+
+CBPS_wfe_mis_lag.two_coef_200 <- 1-mean(sapply(New_N200_T10_homo_mis, function (x) x$CBPS_wfe_mis_lag.two_coef), na.rm = T)
+
+Maha_wfe_mis_lag.two_coef_200 <- 1-mean(sapply(New_N200_T10_homo_mis, function (x) x$Maha_wfe_mis_lag.two_coef), na.rm = T)
+
+ols_mis_coef_200 <- 1-mean(sapply(New_N200_T10_homo_mis, function (x) x$ols_mis_coef), na.rm = T)
+
+Synth_wfe_mis_lag.one_coef_200
+Synth_wfe_mis_lag.two_coef_200
+Pscore_wfe_mis_lag.one_coef_200
+Pscore_wfe_mis_lag.two_coef_200
+CBPS_wfe_mis_lag.one_coef_200
+CBPS_wfe_mis_lag.two_coef_200
+Maha_wfe_mis_lag.one_coef_200
+Maha_wfe_mis_lag.two_coef_200
+ols_mis_coef_200
+
+###### N = 300 ########
+Synth_wfe_mis_lag.one_coef_300 <- 1-mean(sapply(New_N300_T10_homo_mis, function (x) x$Synth_wfe_mis_lag.one_coef), na.rm = T)
+
+Pscore_wfe_mis_lag.one_coef_300 <- 1-mean(sapply(New_N300_T10_homo_mis, function (x) x$Pscore_wfe_mis_lag.one_coef), na.rm = T)
+
+CBPS_wfe_mis_lag.one_coef_300 <- 1-mean(sapply(New_N300_T10_homo_mis, function (x) x$CBPS_wfe_mis_lag.one_coef), na.rm = T)
+
+Maha_wfe_mis_lag.one_coef_300 <- 1-mean(sapply(New_N300_T10_homo_mis, function (x) x$Maha_wfe_mis_lag.one_coef), na.rm = T)
+
+Synth_wfe_mis_lag.two_coef_300 <- 1-mean(sapply(New_N300_T10_homo_mis, function (x) x$Synth_wfe_mis_lag.two_coef), na.rm = T)
+
+Pscore_wfe_mis_lag.two_coef_300 <- 1-mean(sapply(New_N300_T10_homo_mis, function (x) x$Pscore_wfe_mis_lag.two_coef), na.rm = T)
+
+CBPS_wfe_mis_lag.two_coef_300 <- 1-mean(sapply(New_N300_T10_homo_mis, function (x) x$CBPS_wfe_mis_lag.two_coef), na.rm = T)
+
+Maha_wfe_mis_lag.two_coef_300 <- 1-mean(sapply(New_N300_T10_homo_mis, function (x) x$Maha_wfe_mis_lag.two_coef), na.rm = T)
+
+ols_mis_coef_300 <- 1-mean(sapply(New_N300_T10_homo_mis, function (x) x$ols_mis_coef), na.rm = T)
+
+Synth_wfe_mis_lag.one_coef_300
+Synth_wfe_mis_lag.two_coef_300
+Pscore_wfe_mis_lag.one_coef_300
+Pscore_wfe_mis_lag.two_coef_300
+CBPS_wfe_mis_lag.one_coef_300
+CBPS_wfe_mis_lag.two_coef_300
+Maha_wfe_mis_lag.one_coef_300
+Maha_wfe_mis_lag.two_coef_300
+ols_mis_coef_300
+
+## T = 20 ##
+### N = 50 ###
+Synth_wfe_mis_lag.one_coef_50 <- 1-mean(sapply(New_N50_T20_homo_mis, function (x) x$Synth_wfe_mis_lag.one_coef), na.rm = T)
+
+Pscore_wfe_mis_lag.one_coef_50 <- 1-mean(sapply(New_N50_T20_homo_mis, function (x) x$Pscore_wfe_mis_lag.one_coef), na.rm = T)
+
+CBPS_wfe_mis_lag.one_coef_50 <- 1-mean(sapply(New_N50_T20_homo_mis, function (x) x$CBPS_wfe_mis_lag.one_coef), na.rm = T)
+
+Maha_wfe_mis_lag.one_coef_50 <- 1-mean(sapply(New_N50_T20_homo_mis, function (x) x$Maha_wfe_mis_lag.one_coef), na.rm = T)
+
+Synth_wfe_mis_lag.two_coef_50 <- 1-mean(sapply(New_N50_T20_homo_mis, function (x) x$Synth_wfe_mis_lag.two_coef), na.rm = T)
+
+Pscore_wfe_mis_lag.two_coef_50 <- 1-mean(sapply(New_N50_T20_homo_mis, function (x) x$Pscore_wfe_mis_lag.two_coef), na.rm = T)
+
+CBPS_wfe_mis_lag.two_coef_50 <- 1-mean(sapply(New_N50_T20_homo_mis, function (x) x$CBPS_wfe_mis_lag.two_coef), na.rm = T)
+
+Maha_wfe_mis_lag.two_coef_50 <- 1-mean(sapply(New_N50_T20_homo_mis, function (x) x$Maha_wfe_mis_lag.two_coef), na.rm = T)
+
+ols_mis_coef_50 <- 1-mean(sapply(New_N50_T20_homo_mis, function (x) x$ols_mis_coef), na.rm = T)
+
+Synth_wfe_mis_lag.one_coef_50
+Synth_wfe_mis_lag.two_coef_50
+Pscore_wfe_mis_lag.one_coef_50
+Pscore_wfe_mis_lag.two_coef_50
+CBPS_wfe_mis_lag.one_coef_50
+CBPS_wfe_mis_lag.two_coef_50
+Maha_wfe_mis_lag.one_coef_50
+Maha_wfe_mis_lag.two_coef_50
+ols_mis_coef_50
+
+
+### N = 100 ###
+Synth_wfe_mis_lag.one_coef_100 <- 1-mean(sapply(New_N100_T20_homo_mis, function (x) x$Synth_wfe_mis_lag.one_coef), na.rm = T)
+
+Pscore_wfe_mis_lag.one_coef_100 <- 1-mean(sapply(New_N100_T20_homo_mis, function (x) x$Pscore_wfe_mis_lag.one_coef), na.rm = T)
+
+CBPS_wfe_mis_lag.one_coef_100 <- 1-mean(sapply(New_N100_T20_homo_mis, function (x) x$CBPS_wfe_mis_lag.one_coef), na.rm = T)
+
+Maha_wfe_mis_lag.one_coef_100 <- 1-mean(sapply(New_N100_T20_homo_mis, function (x) x$Maha_wfe_mis_lag.one_coef), na.rm = T)
+
+Synth_wfe_mis_lag.two_coef_100 <- 1-mean(sapply(New_N100_T20_homo_mis, function (x) x$Synth_wfe_mis_lag.two_coef), na.rm = T)
+
+Pscore_wfe_mis_lag.two_coef_100 <- 1-mean(sapply(New_N100_T20_homo_mis, function (x) x$Pscore_wfe_mis_lag.two_coef), na.rm = T)
+
+CBPS_wfe_mis_lag.two_coef_100 <- 1-mean(sapply(New_N100_T20_homo_mis, function (x) x$CBPS_wfe_mis_lag.two_coef), na.rm = T)
+
+Maha_wfe_mis_lag.two_coef_100 <- 1-mean(sapply(New_N100_T20_homo_mis, function (x) x$Maha_wfe_mis_lag.two_coef), na.rm = T)
+
+ols_mis_coef_100 <- 1-mean(sapply(New_N100_T20_homo_mis, function (x) x$ols_mis_coef), na.rm = T)
+
+Synth_wfe_mis_lag.one_coef_100
+Synth_wfe_mis_lag.two_coef_100
+Pscore_wfe_mis_lag.one_coef_100
+Pscore_wfe_mis_lag.two_coef_100
+CBPS_wfe_mis_lag.one_coef_100
+CBPS_wfe_mis_lag.two_coef_100
+Maha_wfe_mis_lag.one_coef_100
+Maha_wfe_mis_lag.two_coef_100
+ols_mis_coef_100
+
+### N = 200 ###
+Synth_wfe_mis_lag.one_coef_200 <- 1-mean(sapply(New_N200_T20_homo_mis, function (x) x$Synth_wfe_mis_lag.one_coef), na.rm = T)
+
+Pscore_wfe_mis_lag.one_coef_200 <- 1-mean(sapply(New_N200_T20_homo_mis, function (x) x$Pscore_wfe_mis_lag.one_coef), na.rm = T)
+
+CBPS_wfe_mis_lag.one_coef_200 <- 1-mean(sapply(New_N200_T20_homo_mis, function (x) x$CBPS_wfe_mis_lag.one_coef), na.rm = T)
+
+Maha_wfe_mis_lag.one_coef_200 <- 1-mean(sapply(New_N200_T20_homo_mis, function (x) x$Maha_wfe_mis_lag.one_coef), na.rm = T)
+
+Synth_wfe_mis_lag.two_coef_200 <- 1-mean(sapply(New_N200_T20_homo_mis, function (x) x$Synth_wfe_mis_lag.two_coef), na.rm = T)
+
+Pscore_wfe_mis_lag.two_coef_200 <- 1-mean(sapply(New_N200_T20_homo_mis, function (x) x$Pscore_wfe_mis_lag.two_coef), na.rm = T)
+
+CBPS_wfe_mis_lag.two_coef_200 <- 1-mean(sapply(New_N200_T20_homo_mis, function (x) x$CBPS_wfe_mis_lag.two_coef), na.rm = T)
+
+Maha_wfe_mis_lag.two_coef_200 <- 1-mean(sapply(New_N200_T20_homo_mis, function (x) x$Maha_wfe_mis_lag.two_coef), na.rm = T)
+
+ols_mis_coef_200 <- 1-mean(sapply(New_N200_T20_homo_mis, function (x) x$ols_mis_coef), na.rm = T)
+
+Synth_wfe_mis_lag.one_coef_200
+Synth_wfe_mis_lag.two_coef_200
+Pscore_wfe_mis_lag.one_coef_200
+Pscore_wfe_mis_lag.two_coef_200
+CBPS_wfe_mis_lag.one_coef_200
+CBPS_wfe_mis_lag.two_coef_200
+Maha_wfe_mis_lag.one_coef_200
+Maha_wfe_mis_lag.two_coef_200
+ols_mis_coef_200
+
+###### N = 300 ########
+Synth_wfe_mis_lag.one_coef_300 <- 1-mean(sapply(New_N300_T20_homo_mis, function (x) x$Synth_wfe_mis_lag.one_coef), na.rm = T)
+
+Pscore_wfe_mis_lag.one_coef_300 <- 1-mean(sapply(New_N300_T20_homo_mis, function (x) x$Pscore_wfe_mis_lag.one_coef), na.rm = T)
+
+CBPS_wfe_mis_lag.one_coef_300 <- 1-mean(sapply(New_N300_T20_homo_mis, function (x) x$CBPS_wfe_mis_lag.one_coef), na.rm = T)
+
+Maha_wfe_mis_lag.one_coef_300 <- 1-mean(sapply(New_N300_T20_homo_mis, function (x) x$Maha_wfe_mis_lag.one_coef), na.rm = T)
+
+Synth_wfe_mis_lag.two_coef_300 <- 1-mean(sapply(New_N300_T20_homo_mis, function (x) x$Synth_wfe_mis_lag.two_coef), na.rm = T)
+
+Pscore_wfe_mis_lag.two_coef_300 <- 1-mean(sapply(New_N300_T20_homo_mis, function (x) x$Pscore_wfe_mis_lag.two_coef), na.rm = T)
+
+CBPS_wfe_mis_lag.two_coef_300 <- 1-mean(sapply(New_N300_T20_homo_mis, function (x) x$CBPS_wfe_mis_lag.two_coef), na.rm = T)
+
+Maha_wfe_mis_lag.two_coef_300 <- 1-mean(sapply(New_N300_T20_homo_mis, function (x) x$Maha_wfe_mis_lag.two_coef), na.rm = T)
+
+ols_mis_coef_300 <- 1-mean(sapply(New_N300_T20_homo_mis, function (x) x$ols_mis_coef), na.rm = T)
+
+Synth_wfe_mis_lag.one_coef_300
+Synth_wfe_mis_lag.two_coef_300
+Pscore_wfe_mis_lag.one_coef_300
+Pscore_wfe_mis_lag.two_coef_300
+CBPS_wfe_mis_lag.one_coef_300
+CBPS_wfe_mis_lag.two_coef_300
+Maha_wfe_mis_lag.one_coef_300
+Maha_wfe_mis_lag.two_coef_300
+ols_mis_coef_300
+#############
+
+#############
 load("New_N50_ephi0.5_T20_hetereo")
 
 Synth_wfe_lag.one_coef_50 <- 1-mean(sapply(New_N50_ephi0.5_T20_hetereo, function (x) x$Synth_wfe_lag.one_coef), na.rm = T)
