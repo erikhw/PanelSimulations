@@ -138,7 +138,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
 
 ## FEs ##
 set.seed(123)
-alphai <- rnorm(n = 100000, mean = 0, sd = 1)
+alphai <- rnorm(n = 100000, mean = 0, sd = .5)
 gammat <- rnorm(n = 100000, mean = 0, sd = .5)
 
 # rho_t_1 = .8; rho_1 = .8
