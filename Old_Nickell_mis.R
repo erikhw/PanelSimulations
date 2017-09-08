@@ -83,7 +83,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
     
     y[1,i] <-  rho_1*y.lagged[1,i] + alphai[i] + gammat[1] + 
       beta*treat[1,i] + lagTreOutc*treat.lagged[1,i] + beta_x*x[1,i] + beta_x2*x2[1,i] +
-      runif(1, -1, 1)*treat[1, i]*alphai[i] +
+      runif(1, 0, 1)*treat[1, i]*alphai[i] +
       eps[1,i]
     
     for (t in 2:Time) {
@@ -102,7 +102,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
       # truth:
       y[t, i] <- rho_1*y[t-1, i] + beta*treat[t,i] + lagTreOutc*treat[t-1,i] + beta_x*x[t,i] + beta_x2*x2[t,i] + 
         alphai[i] + gammat[t] + 
-        runif(1, -1, 1)*treat[t, i]*alphai[i] +
+        runif(1, 0, 1)*treat[t, i]*alphai[i] +
         eps[t, i] # the current period
       
       y.lagged[t,i] <- y[t-1,i]
