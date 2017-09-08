@@ -2103,6 +2103,8 @@ Maha_wfe_lag.one_coef_200
 Maha_wfe_lag.two_coef_200
 ols_coef_200
 
+###### Nickell #######
+setwd("~/Dropbox/w2fe/Simulations/results")
 load("small_rho6_N50")
 load("small_rho6_N100")
 load("small_rho6_N200")

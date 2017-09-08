@@ -10,15 +10,15 @@ setwd("/home/haixiaow/Simulate/Simulations/results")
 
 ## FEs ##
 set.seed(123)
-alphai <- rnorm(n = 1000, mean = 0, sd = 1)
+alphai <- rnorm(n = 10000, mean = 0, sd = 2.5)
 gammat <- rnorm(n = 100, mean = 0, sd = .5)
 
 phi = .5
 x <- matrix(NA, ncol = length(alphai), nrow = length(gammat))
 for (i in 1:length(alphai)) {
   for(t in 2:length(gammat)){
-    x[, i][1] <- rnorm(1, 0, 1) 
-    x[, i][t] <- phi*x[, i][t-1] + rnorm(1, 0, 1) 
+    x[, i][1] <- rnorm(1, 0.5, 1) 
+    x[, i][t] <- phi*x[, i][t-1] + rnorm(1, 0.5, 1) 
   }
   
 }
@@ -71,14 +71,14 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   for (i in 1:N) {
     y.lagged[1, i] <- rnorm(1) + alphai[i] + gammat[1]
     treat.lagged[1,i] <- rbinom(1,1,exp(rho_x*x[1,i] + rho_x2*x2[1,i] + alphai[i] + gammat[1])/(1+exp(rho_x*x[1,i] + rho_x2*x2[1,i] + alphai[i] + gammat[1])))
-    treat.error <- -3
+    treat.error <- -4
     prob <- exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1] + treat.error)/
       (1+exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1] + treat.error))
     treat[1,i] <- rbinom(1,1, prob)
     if (hetereo == T) {
       eps[1, i] <- rnorm(1, 0, runif(1, 1, 2))
     } else {
-      eps[1, i] <- rnorm(1, 0, 1.5)
+      eps[1, i] <- rnorm(1, 0, 1)
     }
     
     y[1,i] <-  rho_1*y.lagged[1,i] + alphai[i] + gammat[1] + 
@@ -87,7 +87,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
       eps[1,i]
     
     for (t in 2:Time) {
-      treat.error <- -3
+      treat.error <- -4
       prob <- exp(rho_t_1*y[t-1,i] + alphai[i] + rho_tt_1*treat[t-1,i] + rho_x*x[t,i] + rho_x2*x2[t,i] +gammat[t] + treat.error)/
         (1+exp(rho_t_1*y[t-1,i] + alphai[i] + rho_tt_1*treat[t-1,i] + rho_x*x[t,i] + rho_x2*x2[t,i] + gammat[t] + treat.error))
       treat[t,i] <- rbinom(1,1, prob)
@@ -96,7 +96,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
       if(hetereo == T) {
         eps[t, i] <- ephi*eps[t-1, i] + rnorm(n = 1, mean = 0, sd = runif(1, 1, 2))
       } else {
-        eps[t, i] <- ephi*eps[t-1, i] + rnorm(n = 1, mean = 0, sd = 1.5)
+        eps[t, i] <- ephi*eps[t-1, i] + rnorm(n = 1, mean = 0, sd = 1)
       }
       
       # truth:
