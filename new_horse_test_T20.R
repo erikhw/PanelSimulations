@@ -10,8 +10,8 @@ setwd("/home/haixiaow/Simulate/Simulations/results")
 
 ## FEs ##
 set.seed(123)
-alphai <- rnorm(n = 10000, mean = 0, sd = 2.5)
-gammat <- rnorm(n = 100, mean = 0, sd = .5)
+alphai <- rnorm(n = 10000, mean = 0, sd = 6)
+gammat <- rnorm(n = 100, mean = 0, sd = 1)
 
 phi = .5
 x <- matrix(NA, ncol = length(alphai), nrow = length(gammat))
@@ -40,7 +40,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
                       beta = 1, beta_x = .2, beta_x2 = 0, 
                       phi = .5, rho_t_2 = .3, ephi = 0,
                       rho_2 = .3, M = 1, hetereo = T,
-                      ITER = 10) {
+                      ITER = 1000) {
   y <- matrix(NA, ncol = N, nrow = Time)
   eps <- matrix(NA, ncol = N, nrow = Time)
   treat <- matrix(NA, ncol = N, nrow = Time)
@@ -83,7 +83,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
     
     y[1,i] <-  rho_1*y.lagged[1,i] + alphai[i] + gammat[1] + 
       beta*treat[1,i] + lagTreOutc*treat.lagged[1,i] + beta_x*x[1,i] + beta_x2*x2[1,i] +
-     # runif(1, 0, 1)*treat[1, i]*alphai[i] +
+      #   runif(1, 0, 1)*treat[1, i]*alphai[i] +
       eps[1,i]
     
     for (t in 2:Time) {
@@ -102,7 +102,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
       # truth:
       y[t, i] <- rho_1*y[t-1, i] + beta*treat[t,i] + lagTreOutc*treat[t-1,i] + beta_x*x[t,i] + beta_x2*x2[t,i] + 
         alphai[i] + gammat[t] + 
-        # runif(1, 0, 1)*treat[t, i]*alphai[i] +
+        #  runif(1, 0, 1)*treat[t, i]*alphai[i] +
         eps[t, i] # the current period
       
       y.lagged[t,i] <- y[t-1,i]
@@ -597,190 +597,190 @@ cat("Now we are doing New_N50_T10_homo \n")
 
 reps <- 2000
 
-### T= 10
-### homo ###
-cat("Now we are doing New_N50_T10_homo \n")
-New_N50_T10_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 50, T= 10, rho_1 = 0.6, rho_t_1 = 0.6, hetereo = F)
-  list(out)
-})
-save(New_N50_T10_homo, file = "New_N50_T10_homo")
-
-cat("Now we are doing New_N100_T10_homo \n")
-New_N100_T10_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 100, T= 10, rho_1 = 0.6, rho_t_1 = 0.6, hetereo = F)
-  list(out)
-})
-save(New_N100_T10_homo, file = "New_N100_T10_homo")
-
-cat("Now we are doing New_N200_T10_homo \n")
-New_N200_T10_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 200, T= 10, rho_1 = 0.6, rho_t_1 = 0.6, hetereo = F)
-  list(out)
-})
-save(New_N200_T10_homo, file = "New_N200_T10_homo")
-
-
-cat("Now we are doing New_N300_T10_homo \n")
-New_N300_T10_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 300, T= 10, rho_1 = 0.6, rho_t_1 = 0.6, hetereo = F)
-  list(out)
-})
-save(New_N300_T10_homo, file = "New_N300_T10_homo")
-
-
-### T = 20
-### homo ###
-cat("Now we are doing New_N50_T20_homo \n")
-New_N50_T20_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 50, T = 20, rho_1 = 0.6, rho_t_1 = 0.6, hetereo = F)
-  list(out)
-})
-save(New_N50_T20_homo, file = "New_N50_T20_homo")
-
-cat("Now we are doing New_N100_T20_homo \n")
-New_N100_T20_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 100, T = 20, rho_1 = 0.6, rho_t_1 = 0.6, hetereo = F)
-  list(out)
-})
-save(New_N100_T20_homo, file = "New_N100_T20_homo")
-
-cat("Now we are doing New_N200_T20_homo \n")
-New_N200_T20_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 200, T = 20, rho_1 = 0.6, rho_t_1 = 0.6, hetereo = F)
-  list(out)
-})
-save(New_N200_T20_homo, file = "New_N200_T20_homo")
-
-
-cat("Now we are doing New_N300_T20_homo \n")
-New_N300_T20_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 300, T = 20, rho_1 = 0.6, rho_t_1 = 0.6, hetereo = F)
-  list(out)
-})
-save(New_N300_T20_homo, file = "New_N300_T20_homo")
-
-### T = 30
-cat("Now we are doing New_N50_T30_homo \n")
-New_N50_T30_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 50, T= 30, rho_1 = 0.6, rho_t_1 = 0.6, hetereo = F)
-  list(out)
-})
-save(New_N50_T30_homo, file = "New_N50_T30_homo")
-
-cat("Now we are doing New_N100_T30_homo \n")
-New_N100_T30_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 100, T= 30, rho_1 = 0.6, rho_t_1 = 0.6, hetereo = F)
-  list(out)
-})
-save(New_N100_T30_homo, file = "New_N100_T30_homo")
-
-cat("Now we are doing New_N200_T30_homo \n")
-New_N200_T30_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 200, T= 30, rho_1 = 0.6, rho_t_1 = 0.6, hetereo = F)
-  list(out)
-})
-save(New_N200_T30_homo, file = "New_N200_T30_homo")
-
-
-cat("Now we are doing New_N300_T30_homo \n")
-New_N300_T30_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 300, T= 30, rho_1 = 0.6, rho_t_1 = 0.6, hetereo = F)
-  list(out)
-})
-save(New_N300_T30_homo, file = "New_N300_T30_homo")
-
-
-###### rho = .8
-### T= 10
-### homo ###
-cat("Now we are doing New_N50_T10_rho8_homo \n")
-New_N50_T10_rho8_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 50, T= 10, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = F)
-  list(out)
-})
-save(New_N50_T10_rho8_homo, file = "New_N50_T10_rho8_homo")
-
-cat("Now we are doing New_N100_T10_rho8_homo \n")
-New_N100_T10_rho8_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 100, T= 10, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = F)
-  list(out)
-})
-save(New_N100_T10_rho8_homo, file = "New_N100_T10_rho8_homo")
-
-cat("Now we are doing New_N200_T10_rho8_homo \n")
-New_N200_T10_rho8_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 200, T= 10, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = F)
-  list(out)
-})
-save(New_N200_T10_rho8_homo, file = "New_N200_T10_rho8_homo")
-
-
-cat("Now we are doing New_N300_T10_rho8_homo \n")
-New_N300_T10_rho8_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 300, T= 10, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = F)
-  list(out)
-})
-save(New_N300_T10_rho8_homo, file = "New_N300_T10_rho8_homo")
-
+# ### T= 10
+# ### hetereo ###
+# cat("Now we are doing New_N50_T10_hetereo \n")
+# New_N50_T10_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+#   out <- sim_wfe2(N = 50, T= 10, rho_1 = 0.6, rho_t_1 = 0.6, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+#   list(out)
+# })
+# save(New_N50_T10_hetereo, file = "New_N50_T10_hetereo")
+# 
+# cat("Now we are doing New_N100_T10_hetereo \n")
+# New_N100_T10_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+#   out <- sim_wfe2(N = 100, T= 10, rho_1 = 0.6, rho_t_1 = 0.6, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+#   list(out)
+# })
+# save(New_N100_T10_hetereo, file = "New_N100_T10_hetereo")
+# 
+# cat("Now we are doing New_N200_T10_hetereo \n")
+# New_N200_T10_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+#   out <- sim_wfe2(N = 200, T= 10, rho_1 = 0.6, rho_t_1 = 0.6, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+#   list(out)
+# })
+# save(New_N200_T10_hetereo, file = "New_N200_T10_hetereo")
+# 
+# 
+# cat("Now we are doing New_N300_T10_hetereo \n")
+# New_N300_T10_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+#   out <- sim_wfe2(N = 300, T= 10, rho_1 = 0.6, rho_t_1 = 0.6, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
+#   list(out)
+# })
+# save(New_N300_T10_hetereo, file = "New_N300_T10_hetereo")
+# 
 
 ### T = 20
-### homo ###
-cat("Now we are doing New_N50_T20_rho8_homo \n")
-New_N50_T20_rho8_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 50, T = 20, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = F)
+### hetereo ###
+cat("Now we are doing New_N50_ephi0.5_T20_hetereo \n")
+New_N50_ephi0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 50, T = 20, rho_1 = 0.6, rho_t_1 = 0.6, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
-save(New_N50_T20_rho8_homo, file = "New_N50_T20_rho8_homo")
+save(New_N50_ephi0.5_T20_hetereo, file = "New_N50_ephi0.5_T20_hetereo")
 
-cat("Now we are doing New_N100_T20_rho8_homo \n")
-New_N100_T20_rho8_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 100, T = 20, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = F)
+cat("Now we are doing New_N100_ephi0.5_T20_hetereo \n")
+New_N100_ephi0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 100, T = 20, rho_1 = 0.6, rho_t_1 = 0.6, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
-save(New_N100_T20_rho8_homo, file = "New_N100_T20_rho8_homo")
+save(New_N100_ephi0.5_T20_hetereo, file = "New_N100_ephi0.5_T20_hetereo")
 
-cat("Now we are doing New_N200_T20_rho8_homo \n")
-New_N200_T20_rho8_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 200, T = 20, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = F)
+cat("Now we are doing New_N200_ephi0.5_T20_hetereo \n")
+New_N200_ephi0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 200, T = 20, rho_1 = 0.6, rho_t_1 = 0.6, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
-save(New_N200_T20_rho8_homo, file = "New_N200_T20_rho8_homo")
+save(New_N200_ephi0.5_T20_hetereo, file = "New_N200_ephi0.5_T20_hetereo")
 
 
-cat("Now we are doing New_N300_T20_rho8_homo \n")
-New_N300_T20_rho8_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 300, T = 20, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = F)
+cat("Now we are doing New_N300_ephi0.5_T20_hetereo \n")
+New_N300_ephi0.5_T20_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 300, T = 20, rho_1 = 0.6, rho_t_1 = 0.6, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
-save(New_N300_T20_rho8_homo, file = "New_N300_T20_rho8_homo")
+save(New_N300_ephi0.5_T20_hetereo, file = "New_N300_ephi0.5_T20_hetereo")
 
 ### T = 30
-cat("Now we are doing New_N50_T30_rho8_homo \n")
-New_N50_T30_rho8_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 50, T= 30, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = F)
+cat("Now we are doing New_N50_ephi0.5_T30_hetereo \n")
+New_N50_ephi0.5_T30_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 50, T= 30, rho_1 = 0.6, rho_t_1 = 0.6, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
-save(New_N50_T30_rho8_homo, file = "New_N50_T30_rho8_homo")
+save(New_N50_ephi0.5_T30_hetereo, file = "New_N50_ephi0.5_T30_hetereo")
 
-cat("Now we are doing New_N100_T30_rho8_homo \n")
-New_N100_T30_rho8_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 100, T= 30, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = F)
+cat("Now we are doing New_N100_ephi0.5_T30_hetereo \n")
+New_N100_ephi0.5_T30_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 100, T= 30, rho_1 = 0.6, rho_t_1 = 0.6, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
-save(New_N100_T30_rho8_homo, file = "New_N100_T30_rho8_homo")
+save(New_N100_ephi0.5_T30_hetereo, file = "New_N100_ephi0.5_T30_hetereo")
 
-cat("Now we are doing New_N200_T30_rho8_homo \n")
-New_N200_T30_rho8_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 200, T= 30, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = F)
+cat("Now we are doing New_N200_ephi0.5_T30_hetereo \n")
+New_N200_ephi0.5_T30_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 200, T= 30, rho_1 = 0.6, rho_t_1 = 0.6, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
-save(New_N200_T30_rho8_homo, file = "New_N200_T30_rho8_homo")
+save(New_N200_ephi0.5_T30_hetereo, file = "New_N200_ephi0.5_T30_hetereo")
 
 
-cat("Now we are doing New_N300_T30_rho8_homo \n")
-New_N300_T30_rho8_homo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
-  out <- sim_wfe2(N = 300, T= 30, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = F)
+cat("Now we are doing New_N300_ephi0.5_T30_hetereo \n")
+New_N300_ephi0.5_T30_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+  out <- sim_wfe2(N = 300, T= 30, rho_1 = 0.6, rho_t_1 = 0.6, ephi = 0.5, rho_tt_1 = 0, lagTreOutc = 0, hetereo = T)
   list(out)
 })
-save(New_N300_T30_rho8_homo, file = "New_N300_T30_rho8_homo")
+save(New_N300_ephi0.5_T30_hetereo, file = "New_N300_ephi0.5_T30_hetereo")
+
+
+# ###### rho = .8
+# ### T= 10
+# ### hetereo ###
+# cat("Now we are doing New_N50_T10_rho8_hetereo \n")
+# New_N50_T10_rho8_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+#   out <- sim_wfe2(N = 50, T= 10, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = T)
+#   list(out)
+# })
+# save(New_N50_T10_rho8_hetereo, file = "New_N50_T10_rho8_hetereo")
+# 
+# cat("Now we are doing New_N100_T10_rho8_hetereo \n")
+# New_N100_T10_rho8_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+#   out <- sim_wfe2(N = 100, T= 10, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = T)
+#   list(out)
+# })
+# save(New_N100_T10_rho8_hetereo, file = "New_N100_T10_rho8_hetereo")
+# 
+# cat("Now we are doing New_N200_T10_rho8_hetereo \n")
+# New_N200_T10_rho8_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+#   out <- sim_wfe2(N = 200, T= 10, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = T)
+#   list(out)
+# })
+# save(New_N200_T10_rho8_hetereo, file = "New_N200_T10_rho8_hetereo")
+# 
+# 
+# cat("Now we are doing New_N300_T10_rho8_hetereo \n")
+# New_N300_T10_rho8_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+#   out <- sim_wfe2(N = 300, T= 10, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = T)
+#   list(out)
+# })
+# save(New_N300_T10_rho8_hetereo, file = "New_N300_T10_rho8_hetereo")
+# 
+# 
+# ### T = 20
+# ### hetereo ###
+# cat("Now we are doing New_N50_T20_rho8_hetereo \n")
+# New_N50_T20_rho8_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+#   out <- sim_wfe2(N = 50, T = 20, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = T)
+#   list(out)
+# })
+# save(New_N50_T20_rho8_hetereo, file = "New_N50_T20_rho8_hetereo")
+# 
+# cat("Now we are doing New_N100_T20_rho8_hetereo \n")
+# New_N100_T20_rho8_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+#   out <- sim_wfe2(N = 100, T = 20, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = T)
+#   list(out)
+# })
+# save(New_N100_T20_rho8_hetereo, file = "New_N100_T20_rho8_hetereo")
+# 
+# cat("Now we are doing New_N200_T20_rho8_hetereo \n")
+# New_N200_T20_rho8_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+#   out <- sim_wfe2(N = 200, T = 20, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = T)
+#   list(out)
+# })
+# save(New_N200_T20_rho8_hetereo, file = "New_N200_T20_rho8_hetereo")
+# 
+# 
+# cat("Now we are doing New_N300_T20_rho8_hetereo \n")
+# New_N300_T20_rho8_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+#   out <- sim_wfe2(N = 300, T = 20, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = T)
+#   list(out)
+# })
+# save(New_N300_T20_rho8_hetereo, file = "New_N300_T20_rho8_hetereo")
+# 
+# ### T = 30
+# cat("Now we are doing New_N50_T30_rho8_hetereo \n")
+# New_N50_T30_rho8_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+#   out <- sim_wfe2(N = 50, T= 30, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = T)
+#   list(out)
+# })
+# save(New_N50_T30_rho8_hetereo, file = "New_N50_T30_rho8_hetereo")
+# 
+# cat("Now we are doing New_N100_T30_rho8_hetereo \n")
+# New_N100_T30_rho8_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+#   out <- sim_wfe2(N = 100, T= 30, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = T)
+#   list(out)
+# })
+# save(New_N100_T30_rho8_hetereo, file = "New_N100_T30_rho8_hetereo")
+# 
+# cat("Now we are doing New_N200_T30_rho8_hetereo \n")
+# New_N200_T30_rho8_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+#   out <- sim_wfe2(N = 200, T= 30, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = T)
+#   list(out)
+# })
+# save(New_N200_T30_rho8_hetereo, file = "New_N200_T30_rho8_hetereo")
+# 
+# 
+# cat("Now we are doing New_N300_T30_rho8_hetereo \n")
+# New_N300_T30_rho8_hetereo <- pforeach(i = 1:reps,.cores = 20, .seed = 2018)({
+#   out <- sim_wfe2(N = 300, T= 30, rho_1 = 0.8, rho_t_1 = 0.8, hetereo = T)
+#   list(out)
+# })
+# save(New_N300_T30_rho8_hetereo, file = "New_N300_T30_rho8_hetereo")
