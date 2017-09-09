@@ -11,7 +11,7 @@ setwd("/home/haixiaow/Simulate/Simulations/results")
 ## FEs ##
 set.seed(123)
 alphai <- rnorm(n = 10000, mean = 0, sd = 6)
-gammat <- rnorm(n = 100, mean = 0, sd = 1)
+gammat <- rnorm(n = 200, mean = 0, sd = 1)
 
 phi = .5
 x <- matrix(NA, ncol = length(alphai), nrow = length(gammat))
