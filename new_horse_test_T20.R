@@ -8,6 +8,8 @@ pkg <- c("wfe", "ggplot2", "plm", "pforeach", "matrixStats")
 lapply(pkg, require, character.only = TRUE)
 setwd("/home/haixiaow/Simulate/Simulations/results")
 
+options(warn=2) # make warning message error message so PS results won't be fucked
+
 ## FEs ##
 set.seed(123)
 alphai <- rnorm(n = 10000, mean = 0, sd = 6)
@@ -39,7 +41,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
                       rho_x = .4, rho_x2 = 0, lagTreOutc = .4, 
                       beta = 1, beta_x = .2, beta_x2 = 0, 
                       phi = .5, rho_t_2 = .3, ephi = 0,
-                      rho_2 = .3, M = 1, hetereo = T,
+                      rho_2 = .3, M = 2, hetereo = T,
                       ITER = 1000) {
   y <- matrix(NA, ncol = N, nrow = Time)
   eps <- matrix(NA, ncol = N, nrow = Time)
@@ -71,7 +73,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
   for (i in 1:N) {
     y.lagged[1, i] <- rnorm(1) + alphai[i] + gammat[1]
     treat.lagged[1,i] <- rbinom(1,1,exp(rho_x*x[1,i] + rho_x2*x2[1,i] + alphai[i] + gammat[1])/(1+exp(rho_x*x[1,i] + rho_x2*x2[1,i] + alphai[i] + gammat[1])))
-    treat.error <- -4
+    treat.error <- -5
     prob <- exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1] + treat.error)/
       (1+exp(rho_t_1*y.lagged[1,i] + alphai[i] + rho_tt_1*treat.lagged[1,i] + rho_x*x[1,i] + rho_x2*x2[1,i] + gammat[1] + treat.error))
     treat[1,i] <- rbinom(1,1, prob)
@@ -87,7 +89,7 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
       eps[1,i]
     
     for (t in 2:Time) {
-      treat.error <- -4
+      treat.error <- -5
       prob <- exp(rho_t_1*y[t-1,i] + alphai[i] + rho_tt_1*treat[t-1,i] + rho_x*x[t,i] + rho_x2*x2[t,i] +gammat[t] + treat.error)/
         (1+exp(rho_t_1*y[t-1,i] + alphai[i] + rho_tt_1*treat[t-1,i] + rho_x*x[t,i] + rho_x2*x2[t,i] + gammat[t] + treat.error))
       treat[t,i] <- rbinom(1,1, prob)
@@ -585,8 +587,8 @@ sim_wfe2 <- function (N = 100, Time = 20, lag.one = 4, lag.two = 6,
 
 
 
-### homo ###
-cat("Now we are doing New_N50_T10_homo \n")
+### hetereo ###
+cat("Now we are doing New_N50_T20_hetereo \n")
 
 # 
 # ## FEs ##
