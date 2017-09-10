@@ -1,6 +1,5 @@
 library(ggplot2)
 setwd("~/Dropbox/w2fe/Simulations/results")
-
 #############
 load("New_N50_ephi0.5_T20_hetereo")
 
